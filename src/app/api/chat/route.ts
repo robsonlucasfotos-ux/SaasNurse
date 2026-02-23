@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-// Optional: if the user doesn't have an API key configured yet, 
+export const maxDuration = 60; // Standard GPT-4 response can take time
+export const dynamic = 'force-dynamic';
 // we will return a mock response or a helpful error.
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY || 'dummy_key',

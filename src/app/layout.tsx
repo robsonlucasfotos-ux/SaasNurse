@@ -3,6 +3,7 @@ import './globals.css';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import NurseAIChat from '@/components/NurseAIChat';
+import { MobileNavProvider } from '@/components/MobileNavProvider';
 
 export const metadata: Metadata = {
   title: 'Guia Aps - Apoio à Decisão Clínica',
@@ -17,16 +18,18 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        <div className="layout-wrapper">
-          <Sidebar />
-          <main className="main-content">
-            <Header />
-            <div className="page-wrapper">
-              {children}
-            </div>
-          </main>
-        </div>
-        <NurseAIChat />
+        <MobileNavProvider>
+          <div className="layout-wrapper">
+            <Sidebar />
+            <main className="main-content">
+              <Header />
+              <div className="page-wrapper">
+                {children}
+              </div>
+            </main>
+          </div>
+          <NurseAIChat />
+        </MobileNavProvider>
       </body>
     </html>
   );

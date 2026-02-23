@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Moon, Sun, Bell, Search, UserCircle } from 'lucide-react';
+import { Moon, Sun, Bell, Search, UserCircle, Menu } from 'lucide-react';
+import { useMobileNav } from './MobileNavProvider';
 import styles from './Header.module.css';
 
 const routeNames: Record<string, string> = {
@@ -19,6 +20,7 @@ const routeNames: Record<string, string> = {
 
 export default function Header() {
     const pathname = usePathname();
+    const { toggleSidebar } = useMobileNav();
     const [isDark, setIsDark] = useState(false);
 
     useEffect(() => {
@@ -49,6 +51,9 @@ export default function Header() {
     return (
         <header className={styles.header}>
             <div className={styles.leftContent}>
+                <button className={styles.menuToggle} onClick={toggleSidebar}>
+                    <Menu size={24} />
+                </button>
                 <h1 className={styles.pageTitle}>{title}</h1>
             </div>
 
