@@ -34,11 +34,7 @@ export default function ElderlyHealthPage() {
                     </div>
                 </div>
 
-                <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--border)' }}>
-                    <button className="btn btn-secondary w-full" onClick={() => window.location.href = '/prescription'}>
-                        Gerar Encaminhamento / Renovar Receitas
-                    </button>
-                </div>
+
             </div>
         </div>
     );

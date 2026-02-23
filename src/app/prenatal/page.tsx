@@ -107,9 +107,7 @@ export default function PrenatalPage() {
                             <p className="text-muted mt-2 mb-4 text-sm">
                                 Utilize estes códigos no e-SUS PEC: <strong>W78 (Gravidez)</strong>, <strong>W71 (Infecções)</strong>, <strong>W81 (Toxemia/DHEG)</strong>.
                             </p>
-                            <button className="btn btn-secondary w-full" onClick={() => window.location.href = '/prescription'}>
-                                Gerar Receita / Exames para esta Paciente
-                            </button>
+
                         </div>
                     </div>
                 ))}

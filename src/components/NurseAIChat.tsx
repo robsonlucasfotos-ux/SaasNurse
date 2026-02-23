@@ -13,7 +13,7 @@ interface Message {
 export default function NurseAIChat() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { id: 'initial', role: 'assistant', content: 'Olá! Sou a NurseAI, sua mentora clínica. Como posso ajudar com protocolos da APS hoje?' }
+        { id: 'initial', role: 'assistant', content: 'Olá! Sou o Guia Aps AI, seu assistente clínico. Como posso ajudar com protocolos hoje?' }
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -84,7 +84,7 @@ export default function NurseAIChat() {
                     <div className={styles.chatHeader}>
                         <div className={styles.headerTitle}>
                             <Bot size={20} />
-                            <span>NurseAI - Consulta Rápida</span>
+                            <span>Guia Aps AI - Consulta Rápida</span>
                         </div>
                         <button className={styles.closeBtn} onClick={() => setIsOpen(false)}>
                             <X size={20} />

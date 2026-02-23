@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import NurseAIChat from '@/components/NurseAIChat';
 
 export const metadata: Metadata = {
-  title: 'NurseAps - Apoio à Decisão Clínica',
+  title: 'Guia Aps - Apoio à Decisão Clínica',
   description: 'Sistema de suporte à decisão clínica e gestão de prescrições para Enfermeiros da APS',
 };
 

@@ -14,8 +14,7 @@ const modules = [
 ];
 
 const tools = [
-  { href: '/soap', label: 'Gerador de SOAP', icon: FileText, desc: 'Estruture registros de consulta rapidamente.' },
-  { href: '/prescription', label: 'Emissor de Receituário', icon: FileText, desc: 'Gere PDFs com o devido respaldo legal.' },
+  { href: '/ciap-search', label: 'Buscador CIAP-2', icon: FileText, desc: 'Busque códigos CIAP por sintomas.' },
   { href: '/norms', label: 'Biblioteca de Normas', icon: BookOpen, desc: 'Consulte resoluções e notas técnicas.' },
 ];
 
@@ -25,7 +24,7 @@ export default function Dashboard() {
       <div className="mb-6">
         <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Olá, Enfermeira 👋</h2>
         <p className="text-muted" style={{ fontSize: '1.1rem' }}>
-          Seja bem-vinda ao NurseAps. Selecione o módulo de atendimento abaixo.
+          Seja bem-vinda ao Guia Aps. Selecione o módulo de atendimento abaixo.
         </p>
       </div>
 

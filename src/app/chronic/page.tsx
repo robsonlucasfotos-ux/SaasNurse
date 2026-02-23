@@ -41,11 +41,7 @@ export default function ChronicPage() {
                     A renovação de receitas uso contínuo por enfermeiros é permitida em HAS/DM estabilizados, inscritos em programas, e se previsto em protocolo municipal, por até 6 meses.
                 </p>
 
-                <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--border)' }}>
-                    <button className="btn btn-secondary w-full" onClick={() => window.location.href = '/prescription'}>
-                        Renovar Receita (Acessar Emissor)
-                    </button>
-                </div>
+
             </div>
         </div>
     );

@@ -108,9 +108,7 @@ export default function ChildCarePage() {
                             <p className="text-muted mt-2 mb-4 text-sm">
                                 Utilize estes códigos no e-SUS PEC: <strong>A98 (Medicina Preventiva)</strong>, <strong>T07 (Ganho de peso)</strong>, <strong>D70 (Diarreia/Inf.)</strong>.
                             </p>
-                            <button className="btn btn-secondary w-full" onClick={() => window.location.href = '/prescription'}>
-                                Gerar Receita / Exames para a Criança
-                            </button>
+
                         </div>
                     </div>
                 ))}

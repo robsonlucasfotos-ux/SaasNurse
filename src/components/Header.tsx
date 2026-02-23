@@ -13,8 +13,7 @@ const routeNames: Record<string, string> = {
     '/elderly-health': 'Saúde do Idoso',
     '/chronic': 'Hipertensão e Diabetes',
     '/vaccination': 'Vacinação',
-    '/soap': 'Gerador de SOAP',
-    '/prescription': 'Emissor de Receituário',
+    '/ciap-search': 'Buscador CIAP-2',
     '/norms': 'Biblioteca de Normas'
 };
 
@@ -45,7 +44,7 @@ export default function Header() {
         }
     };
 
-    const title = routeNames[pathname] || 'NurseAps';
+    const title = routeNames[pathname] || 'Guia Aps';
 
     return (
         <header className={styles.header}>

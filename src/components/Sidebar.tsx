@@ -20,9 +20,8 @@ const navItems = [
 ];
 
 const docItems = [
-  { href: '/soap', label: 'Gerador SOAP', icon: FileText },
-  { href: '/prescription', label: 'Prescrições/Exames', icon: FileText },
-  { href: '/norms', label: 'Normas COFEN', icon: BookOpen },
+  { href: '/ciap-search', label: 'Buscador CIAP-2', icon: FileText },
+  { href: '/norms', label: 'Normas', icon: BookOpen },
 ];
 
 export default function Sidebar() {
@@ -33,7 +32,7 @@ export default function Sidebar() {
       <div className={styles.logoContainer}>
         <div className={styles.logoIcon}><Stethoscope size={24} color="white" /></div>
         <div className={styles.logoText}>
-          <span className={styles.logoTitle}>Nurse</span>
+          <span className={styles.logoTitle}>Guia</span>
           <span className={styles.logoHighlight}>Aps</span>
         </div>
       </div>
