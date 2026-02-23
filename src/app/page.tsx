@@ -23,7 +23,7 @@ export default function Dashboard() {
   return (
     <div>
       <div className="mb-6">
-        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Olá, Enfermeira Cláudia 👋</h2>
+        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Olá, Enfermeira 👋</h2>
         <p className="text-muted" style={{ fontSize: '1.1rem' }}>
           Seja bem-vinda ao NurseAps. Selecione o módulo de atendimento abaixo.
         </p>

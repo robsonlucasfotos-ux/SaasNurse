@@ -76,7 +76,7 @@ export default function Header() {
                     <div className={styles.userProfile}>
                         <UserCircle size={32} className={styles.userIcon} />
                         <div className={styles.userInfo}>
-                            <span className={styles.userName}>Enf. Cláudia</span>
+                            <span className={styles.userName}>Enfermeira</span>
                             <span className={styles.userRole}>Coren-UF 123456</span>
                         </div>
                     </div>
