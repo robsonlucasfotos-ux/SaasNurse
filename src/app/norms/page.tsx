@@ -64,21 +64,27 @@ export default function NormsPage() {
                         </li>
                         <li className="p-4 border rounded hover:bg-opacity-50 transition-colors cursor-pointer" style={{ borderColor: 'var(--border)' }}>
                             <div className="flex justify-between items-center">
-                                <strong className="text-primary">PCDT: ISTs (2022)</strong>
+                                <strong className="text-primary">Diretrizes RENAME / CBAF</strong>
                             </div>
-                            <p className="text-sm mt-2 text-muted">Protocolo Clínico e Diretrizes Terapêuticas para Atenção Integral às Pessoas com Infecções Sexualmente Transmissíveis.</p>
+                            <p className="text-sm mt-2 text-muted">Regulamenta o acervo de fármacos disponíveis, incluindo o Componente Básico da Assistência Farmacêutica (CBAF) e assegurando o padrão de prescrições pelo enfermeiro de compostos sintomáticos e antimicrobianos preconizados.</p>
                         </li>
                         <li className="p-4 border rounded hover:bg-opacity-50 transition-colors cursor-pointer" style={{ borderColor: 'var(--border)' }}>
                             <div className="flex justify-between items-center">
-                                <strong className="text-primary">Caderno de Atenção Básica nº 32 (Pré-Natal)</strong>
+                                <strong className="text-primary">Diretrizes de Tabulação - CIAP-2</strong>
                             </div>
-                            <p className="text-sm mt-2 text-muted">Atenção ao Pré-Natal de Baixo Risco. Referenda a conduta da enfermagem na suplementação (Ferro, Ácido Fólico) e no manejo de queixas comuns.</p>
+                            <p className="text-sm mt-2 text-muted">Adoção compulsória da Classificação Internacional da Atenção Primária para registro em Prontuário Eletrônico do paciente estruturado no Método SOAP.</p>
                         </li>
                         <li className="p-4 border rounded hover:bg-opacity-50 transition-colors cursor-pointer" style={{ borderColor: 'var(--border)' }}>
                             <div className="flex justify-between items-center">
-                                <strong className="text-primary">Caderno de Atenção Básica nº 33 (Puericultura)</strong>
+                                <strong className="text-primary">PCDT: ISTs (Atenção Integral)</strong>
                             </div>
-                            <p className="text-sm mt-2 text-muted">Saúde da Criança: Crescimento e Desenvolvimento.</p>
+                            <p className="text-sm mt-2 text-muted">Protocolo Clínico e Diretrizes Terapêuticas autorizando o tratamento precoce e convocação de parcerias para agravos como Sífilis, Cancroide e outras ISTs.</p>
+                        </li>
+                        <li className="p-4 border rounded hover:bg-opacity-50 transition-colors cursor-pointer" style={{ borderColor: 'var(--border)' }}>
+                            <div className="flex justify-between items-center">
+                                <strong className="text-primary">Portaria GM/MS nº 5.201/2024</strong>
+                            </div>
+                            <p className="text-sm mt-2 text-muted">Modernização do arranjo das doenças e agravos sujeitos à notificação compulsória no SINAN (incluindo DART, Violência, EAPV e agravos sazonais).</p>
                         </li>
                     </ul>
 

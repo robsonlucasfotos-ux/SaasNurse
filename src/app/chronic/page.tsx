@@ -15,7 +15,7 @@ export default function ChronicPage() {
                     <Stethoscope /> Metas Terapêuticas (MS 2024)
                 </h3>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 border rounded" style={{ borderColor: 'var(--border)' }}>
                         <strong>Hipertensão Arterial (HAS)</strong>
                         <ul className="mt-2 text-sm text-muted ml-4">

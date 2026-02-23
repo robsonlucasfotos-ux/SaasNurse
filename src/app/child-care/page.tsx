@@ -5,53 +5,77 @@ import { Baby, CheckCircle, AlertTriangle } from 'lucide-react';
 
 const ageMarkers = [
     {
-        id: '15d',
-        title: '15 dias a 1 mês',
+        id: '2m',
+        title: '2 Meses',
         symptoms: [
-            { name: 'Icterícia Fisiológica', conduct: 'Avaliar zonas de Kramer. Estimular AM em livre demanda. Banho de sol. CIAP-2: A93' },
-            { name: 'Cólica do Lactente', conduct: 'Massagem (Shantala), compressa morna. Tranquilizar a mãe. CIAP-2: D01' },
+            { name: 'Marcos do Desenvolvimento', conduct: 'Sorriso social voluntário? Sustenta a cabeça brevemente em prono? Fixa/segue objetos em 180 graus?' },
+            { name: 'Fase do Leite & Prevenção', conduct: 'Aleitamento Materno Exclusivo (AME). Proibido chás/água. Prevenção Morte Súbita: Orientar decúbito dorsal (barriga para cima) no berço.' },
+            { name: 'Antropometria', conduct: 'Aferir Peso, Estatura, Perímetro Cefálico e avaliar Z-score OMS.' },
         ],
         prescriptions: [
-            { med: 'Vitamina D (Colecalciferol)', posology: '400 UI/dia a partir da 1ª semana de vida.', pcdt: true },
+            { med: 'Vacinas (Calendário)', posology: 'Pentavalente (1ªD), VIP (1ªD), Pneumo 10V (1ªD), Rotavírus (1ªD).', pcdt: true },
+        ]
+    },
+    {
+        id: '4m',
+        title: '4 Meses (Até 6m)',
+        symptoms: [
+            { name: 'Marcos do Desenvolvimento', conduct: 'Rola intencionalmente? Inicia postura sentada com apoio? Emite sons guturais / gargalhadas? Leva objetos à boca?' },
+            { name: 'Orientações', conduct: 'Manutenção do AME. Orientar sobre segurança contra quedas (camas/sofás) e aspiração de objetos.' },
+        ],
+        prescriptions: [
+            { med: 'Vacinas (Calendário)', posology: 'Pentavalente (2ªD), VIP (2ªD), Pneumo 10V (2ªD), Rotavírus (2ªD).', pcdt: true },
         ]
     },
     {
         id: '6m',
         title: '6 Meses',
         symptoms: [
-            { name: 'Introdução Alimentar', conduct: 'Orientar papa principal, frutas. Não liquidificar, amassar. Manter AM. CIAP-2: T03' },
-            { name: 'Assaduras (Dermatite de Fraldas)', conduct: 'Higiene com água e algodão, secar bem, uso de pomada de barreira (Óxido de Zinco). CIAP-2: S82' },
+            { name: 'Introdução Alimentar', conduct: 'Alimentos devem ser amassados com garfo (NUNCA liquefeitos). Oferta ativa de água potável. Manter AM.' },
+            { name: 'Marcos do Desenvolvimento', conduct: 'Senta sem apoio? Transfere objetos de uma mão para a outra?' },
         ],
         prescriptions: [
-            { med: 'Sulfato Ferroso (Gotas)', posology: 'Profilaxia: 1mg/kg/dia se fatores de risco. (Sempre avaliar termo/peso).', pcdt: true },
+            { med: 'Vacinas (Calendário)', posology: 'Pentavalente (3ªD), VIP (3ªD).' },
+            { med: 'Sulfato Ferroso (Gotas)', posology: 'Profilaxia: 1mg/kg/dia para crianças em AME até o 24º mês.', pcdt: true },
             { med: 'Vitamina A (Megadose)', posology: '100.000 UI, Via Oral, Dose única.', pcdt: true },
         ]
     },
     {
-        id: '12m',
-        title: '12 Meses (1 Ano)',
+        id: '9m',
+        title: '9 Meses (Até 12m)',
         symptoms: [
-            { name: 'Infecção Respiratória Alta (Resfriado)', conduct: 'Lavagem nasal com SF 0,9%. Repouso. Hidratação. Sinal de alerta: taquipneia. CIAP-2: R74' },
-            { name: 'Parasitoses (Prevenção)', conduct: 'Higiene das mãos, lavar alimentos, água tratada. CIAP-2: D96' },
+            { name: 'Marcos do Desenvolvimento', conduct: 'Engatinha? Fica em pé agarrando móveis? Movimento de pinça (indicador e polegar)? Articula dissílabas (ma-ma, pa-pa)?' },
         ],
         prescriptions: [
-            { med: 'Vitamina A (Megadose)', posology: '200.000 UI, Via Oral, Dose única (reforço anual).', pcdt: true },
-            { med: 'Albendazol 400mg/10ml', posology: 'Suspensão a partir de 1 ano para profilaxia local, se indicado e protocolo municipal vigente.', pcdt: true },
+            { med: 'Vacinas (Calendário)', posology: 'Febre Amarela (Dose Inicial - em áreas recomendadas).', pcdt: true },
+        ]
+    },
+    {
+        id: '12m',
+        title: '12 a 24 Meses (1 a 2 Anos)',
+        symptoms: [
+            { name: 'Marcos e Autonomia', conduct: 'Anda com firmeza? Corre/sobe degraus? Frases de 2-3 palavras? Aponta partes do corpo?' },
+            { name: 'Orientações Educativas', conduct: 'Escovação supervisionada: pasta com flúor (1000-1500ppm) qtd grão de arroz. Proibido telas/smartphones antes dos 24m.' },
+        ],
+        prescriptions: [
+            { med: '12m: Vacinas', posology: 'Tríplice Viral (1ªD), Pneumo 10V (Reforço), Meningo C (Reforço).', pcdt: true },
+            { med: '15m: Vacinas', posology: 'DTP (Reforço), VOP (Reforço oral), Hepatite A, Tetra Viral.', pcdt: true },
+            { med: 'Vitamina A (Megadose)', posology: '200.000 UI, Via Oral (Reforço anual até 59m).', pcdt: true },
         ]
     }
 ];
 
 export default function ChildCarePage() {
-    const [activeTab, setActiveTab] = useState('15d');
+    const [activeTab, setActiveTab] = useState('2m');
 
     return (
         <div className="flex flex-col h-full">
-            <div className="mb-6 flex justify-between items-center">
+            <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2>Puericultura (Acompanhamento CD)</h2>
                     <p className="text-muted">Avaliação do crescimento e desenvolvimento por marcos de idade.</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     {ageMarkers.map(m => (
                         <button
                             key={m.id}
@@ -72,7 +96,7 @@ export default function ChildCarePage() {
                             Condutas - {m.title}
                         </h3>
 
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <h4 className="flex items-center gap-2 mb-4 text-warning">
                                     <AlertTriangle size={18} /> Intercorrências & Orientações
@@ -104,11 +128,10 @@ export default function ChildCarePage() {
                         </div>
 
                         <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--border)' }}>
-                            <h4>Alertas CIAP-2 Relacionados</h4>
+                            <h4>Mapeamento CIAP-2 Relacionado</h4>
                             <p className="text-muted mt-2 mb-4 text-sm">
-                                Utilize estes códigos no e-SUS PEC: <strong>A98 (Medicina Preventiva)</strong>, <strong>T07 (Ganho de peso)</strong>, <strong>D70 (Diarreia/Inf.)</strong>.
+                                Códigos pertinentes estruturados no PEC: <strong>-30 (Exame médico completo)</strong>, <strong>-45 (Educação em Saúde/Orientações)</strong>, <strong>-44 (Vacinação preventiva)</strong> e agravos como <strong>D70/D73 (Gastroenterite)</strong>.
                             </p>
-
                         </div>
                     </div>
                 ))}

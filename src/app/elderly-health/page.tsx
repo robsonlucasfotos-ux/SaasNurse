@@ -1,40 +1,39 @@
 'use client';
 
-import { ShieldAlert } from 'lucide-react';
+import { Activity, ClipboardList } from 'lucide-react';
 
 export default function ElderlyHealthPage() {
     return (
-        <div className="flex flex-col h-full">
-            <div className="mb-6">
+        <div className="flex flex-col h-full gap-6">
+            <div>
                 <h2>Saúde do Idoso</h2>
-                <p className="text-muted">Avaliação multidimensional, rastreio de fragilidade e polifarmácia.</p>
+                <p className="text-muted">Protocolo de Avaliação Multidimensional e Imunossenescência.</p>
             </div>
 
-            <div className="card w-full flex-1">
+            <div className="card">
                 <h3 className="flex items-center gap-2 mb-6" style={{ color: 'var(--primary)' }}>
-                    <ShieldAlert /> Avaliação Geriátrica Ampla (AGA)
+                    <ClipboardList size={22} /> Avaliação Geriátrica Ampla (AGA)
                 </h3>
 
-                <div className="grid grid-cols-2 gap-6">
-                    <div className="p-4 border rounded" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-hover)' }}>
-                        <strong>1. Avaliação de Quedas</strong>
-                        <p className="mt-2 text-sm text-muted">Investigar ocorrência de quedas no último ano. CIAP-2: A08 (Queda)</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="p-4 border rounded bg-surface">
+                        <h4 className="flex items-center gap-2 mb-2"><Activity size={18} /> Equilíbrio e Marcha</h4>
+                        <p className="text-sm text-muted">Aferir risco de quedas via Timed Up and Go (TUG). Revisar segurança doméstica. CIAP-2: A04</p>
                     </div>
-                    <div className="p-4 border rounded" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-hover)' }}>
-                        <strong>2. Polifarmácia</strong>
-                        <p className="mt-2 text-sm text-muted">Uso de 5 ou mais medicamentos. Revisar lista de RENAME e interações. CIAP-2: A23 (Risco)</p>
+                    <div className="p-4 border rounded bg-surface">
+                        <h4 className="flex items-center gap-2 mb-2"><Activity size={18} /> Rastreio Cognitivo e Crônicos</h4>
+                        <p className="text-sm text-muted">Aplicar Mini-Mental. Monitorar PA e Glicemia. CIAP-2: P70 (Demência), P20 (Memória) e T90 (DM2).</p>
                     </div>
-                    <div className="p-4 border rounded" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-hover)' }}>
-                        <strong>3. Rastreio Cognitivo</strong>
-                        <p className="mt-2 text-sm text-muted">Aplicar Mini-Mental (MEEM). Se alterado, encaminhar avaliação médica. CIAP-2: P20 (Memória)</p>
-                    </div>
-                    <div className="p-4 border rounded" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-hover)' }}>
-                        <strong>4. Vacinação</strong>
-                        <p className="mt-2 text-sm text-muted">Influenza anual, Dupla Adulto (dT) e Pneumocócica (se institucionalizado). CIAP-2: A44</p>
+                    <div className="p-4 border rounded bg-surface">
+                        <h4 className="flex items-center gap-2 mb-2"><Activity size={18} /> Vacinação e Imunossenescência</h4>
+                        <p className="text-sm text-muted">Verificar e aplicar: Influenza (anual), Pneumocócica 23, Hepatite B e dT (Dupla Adulto).</p>
                     </div>
                 </div>
+            </div>
 
-
+            {/* Respaldo Jurídico Footer */}
+            <div className="mt-auto border-t pt-4 text-center text-xs text-muted">
+                <p>Baseado na Lei 7.498/86 e Decreto 94.406/87. Consulte sempre os Manuais do MS e Protocolos Municipais.</p>
             </div>
         </div>
     );

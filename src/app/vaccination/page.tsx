@@ -5,15 +5,16 @@ import { Syringe, Calendar, CheckCircle, ShieldAlert } from 'lucide-react';
 
 // Simplified representation of the Brazilian Immunization Program schedule for the first years
 const vaccinationSchedule = [
-    { months: 0, vaccines: ['BCG', 'Hepatite B (nas primeiras 12 horas)'] },
-    { months: 2, vaccines: ['Pentavalente (DTP/Hib/Hep B) - 1ª dose', 'VIP (Inativada Poliomielite) - 1ª dose', 'Pneumocócica 10 Valente - 1ª dose', 'Rotavírus Humano - 1ª dose'] },
-    { months: 3, vaccines: ['Meningocócica C (Conjugada) - 1ª dose'] },
-    { months: 4, vaccines: ['Pentavalente - 2ª dose', 'VIP - 2ª dose', 'Pneumocócica 10 - 2ª dose', 'Rotavírus Humano - 2ª dose'] },
-    { months: 5, vaccines: ['Meningocócica C - 2ª dose'] },
-    { months: 6, vaccines: ['Pentavalente - 3ª dose', 'VIP - 3ª dose', 'Influenza (1ª a 2ª dose temporada)'] },
-    { months: 9, vaccines: ['Febre Amarela - 1ª Dose (Depende da região)'] },
-    { months: 12, vaccines: ['Tríplice Viral (Sarampo, Caxumba, Rubéola) - 1ª dose', 'Pneumocócica 10 - Reforço', 'Meningocócica C - Reforço'] },
-    { months: 15, vaccines: ['DTP (Tríplice Bacteriana) - 1º Reforço', 'VOP (Poliomielite Oral) - 1º Reforço', 'Tetraviral (Tríplice Viral + Varicela)', 'Hepatite A - Dose Única'] },
+    { months: 0, vaccines: ['BCG (Prevenção TB Miliar/Meníngea)', 'Hepatite B - 1ª Dose (Prevenção infecção precoce)'] },
+    { months: 2, vaccines: ['Pentavalente (DTP/Hib/Hep B) - 1ª Dose', 'VIP (Inativada Poliomielite) - 1ª Dose', 'Pneumo 10 Valente - 1ª Dose', 'Rotavírus Humano - 1ª Dose'] },
+    { months: 3, vaccines: ['Meningocócica C - 1ª Dose (Neisseria meningitidis C)'] },
+    { months: 4, vaccines: ['Pentavalente - 2ª Dose', 'VIP - 2ª Dose', 'Pneumo 10 Valente - 2ª Dose', 'Rotavírus Humano - 2ª Dose'] },
+    { months: 5, vaccines: ['Meningocócica C - 2ª Dose'] },
+    { months: 6, vaccines: ['Pentavalente - 3ª Dose', 'VIP - 3ª Dose (Conclusão do esquema primário)'] },
+    { months: 9, vaccines: ['Febre Amarela - Dose Inicial (Áreas de recomendação)'] },
+    { months: 12, vaccines: ['Tríplice Viral (Sarampo, Caxumba, Rubéola) - 1ª Dose', 'Pneumo 10 Valente - Reforço', 'Meningocócica C - Reforço'] },
+    { months: 15, vaccines: ['DTP (Reforço bacteriano)', 'VOP (Poliomielite oral/gotinha)', 'Tetraviral (Tríplice + Varicela)', 'Hepatite A'] },
+    { months: 24, vaccines: ['Verificação e resgate de histórico (Ex: Febre Amarela atrasada)', 'Gripe (Influenza) - Anual'] },
     { months: 48, vaccines: ['DTP - 2º Reforço', 'VOP - 2º Reforço', 'Febre Amarela - Reforço'] },
     { months: 108, vaccines: ['HPV (Meninas e Meninos de 9 a 14 anos) - 2 doses'] }
 ];

@@ -1,21 +1,24 @@
 import Link from 'next/link';
 import {
   HeartPulse, Baby, Activity, ShieldAlert,
-  Stethoscope, Syringe, FileText, BookOpen
+  Stethoscope, Syringe, FileText, BookOpen,
+  Package, AlertTriangle, Thermometer
 } from 'lucide-react';
 
 const modules = [
   { href: '/prenatal', label: 'Pré-natal (Gestantes)', icon: HeartPulse, color: '#ec4899', desc: 'Acompanhamento por trimestres, W78/W71.' },
   { href: '/child-care', label: 'Puericultura', icon: Baby, color: '#3b82f6', desc: 'Marcos de desenvolvimento, A98/D70.' },
-  { href: '/womens-health', label: 'Saúde da Mulher', icon: Activity, color: '#f43f5e', desc: 'ISTs, Planejamento, Climatério.' },
-  { href: '/elderly-health', label: 'Saúde do Idoso', icon: ShieldAlert, color: '#8b5cf6', desc: 'Fragilidade, Polifarmácia.' },
-  { href: '/chronic', label: 'Hipertensão/Diabetes', icon: Stethoscope, color: '#10b981', desc: 'Renovação de receitas, metas.' },
+  { href: '/elderly-health', label: 'Saúde do Idoso', icon: ShieldAlert, color: '#8b5cf6', desc: 'Mini-Mental, Equilíbrio, Imunossenescência.' },
+  { href: '/wound-care', label: 'Curativos / Evolução', icon: Thermometer, color: '#f43f5e', desc: 'Sistema RYB e diário fotográfico clínico.' },
+  { href: '/unit-management', label: 'Gestão da Unidade', icon: Package, color: '#6366f1', desc: 'Estoque de insumos, materiais e setores.' },
+  { href: '/chronic', label: 'Hipertensão/Diabetes', icon: Stethoscope, color: '#10b981', desc: 'Renovação de receitas, metas clínicas.' },
   { href: '/vaccination', label: 'Vacinação', icon: Syringe, color: '#f59e0b', desc: 'Calendário vacinal e alertas.' },
 ];
 
 const tools = [
   { href: '/ciap-search', label: 'Buscador CIAP-2', icon: FileText, desc: 'Busque códigos CIAP por sintomas.' },
   { href: '/norms', label: 'Biblioteca de Normas', icon: BookOpen, desc: 'Consulte resoluções e notas técnicas.' },
+  { href: '/vigilancia', label: 'Vigilância Epidemiológica', icon: AlertTriangle, desc: 'Notificações compulsórias e SINAN.', color: '#ef4444' },
 ];
 
 export default function Dashboard() {
@@ -24,12 +27,12 @@ export default function Dashboard() {
       <div className="mb-6">
         <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Olá, Enfermeira 👋</h2>
         <p className="text-muted" style={{ fontSize: '1.1rem' }}>
-          Seja bem-vinda ao Guia Aps. Selecione o módulo de atendimento abaixo.
+          Seja bem-vinda ao Guia Aps. Seu assistente pessoal de suporte à decisão e gestão da unidade.
         </p>
       </div>
 
       <h3 className="mb-4">Módulos Clínicos</h3>
-      <div className="grid grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
         {modules.map(mod => {
           const Icon = mod.icon;
           return (
@@ -54,7 +57,7 @@ export default function Dashboard() {
       </div>
 
       <h3 className="mb-4">Ferramentas de Apoio</h3>
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {tools.map(tool => {
           const Icon = tool.icon;
           return (
