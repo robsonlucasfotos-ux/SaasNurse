@@ -276,7 +276,7 @@ export default function WoundCarePage() {
                                 <div className="flex items-center gap-4">
                                     <label className="btn btn-outline flex items-center gap-2 cursor-pointer text-sm py-2 px-3">
                                         <ImageIcon size={16} /> {newEvo.photoPreview ? 'Substituir Foto' : 'Capturar/Anexar Foto'}
-                                        <input type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
+                                        <input type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhoto} />
                                     </label>
                                     {newEvo.photoPreview && (
                                         <span className="text-xs text-green-600 flex items-center gap-1">Imagem pronta ✓</span>
