@@ -1,0 +1,42 @@
+
+> aps-nurse-saas@0.1.0 build
+> next build
+
+ÔÜá Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\robso\.gemini\antigravity\scratch\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\robso\.gemini\antigravity\scratch\aps-nurse-saas\package-lock.json
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+
+  Creating an optimized production build ...
+Ô£ô Compiled successfully in 23.2s
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/14) ...
+  Generating static pages using 7 workers (3/14) 
+  Generating static pages using 7 workers (6/14) 
+  Generating static pages using 7 workers (10/14) 
+Ô£ô Generating static pages using 7 workers (14/14) in 993.7ms
+  Finalizing page optimization ...
+
+Route (app)
+Ôöî Ôùï /
+Ôö£ Ôùï /_not-found
+Ôö£ ãÆ /api/chat
+Ôö£ Ôùï /child-care
+Ôö£ Ôùï /chronic
+Ôö£ Ôùï /elderly-health
+Ôö£ Ôùï /norms
+Ôö£ Ôùï /prenatal
+Ôö£ Ôùï /prescription
+Ôö£ Ôùï /soap
+Ôö£ Ôùï /vaccination
+Ôöö Ôùï /womens-health
+
+
+Ôùï  (Static)   prerendered as static content
+ãÆ  (Dynamic)  server-rendered on demand
+
