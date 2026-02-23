@@ -1,35 +1,27 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
+import BottomNav from '@/components/BottomNav';
 import NurseAIChat from '@/components/NurseAIChat';
-import { MobileNavProvider } from '@/components/MobileNavProvider';
 
 export const metadata: Metadata = {
-  title: 'Guia Aps - Apoio à Decisão Clínica',
-  description: 'Sistema de suporte à decisão clínica e gestão de prescrições para Enfermeiros da APS',
+  title: 'Guia APS — Suporte Clínico',
+  description: 'Hub de inteligência clínica para enfermeiros da Atenção Primária à Saúde.',
+  viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
-        <MobileNavProvider>
-          <div className="layout-wrapper">
-            <Sidebar />
-            <main className="main-content">
-              <Header />
-              <div className="page-wrapper">
-                {children}
-              </div>
-            </main>
-          </div>
-          <NurseAIChat />
-        </MobileNavProvider>
+        <div className="layout-wrapper">
+          <main className="main-content">
+            <Header />
+            <div className="page-wrapper">{children}</div>
+          </main>
+        </div>
+        <BottomNav />
+        <NurseAIChat />
       </body>
     </html>
   );

@@ -2,89 +2,67 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Moon, Sun, Bell, Search, UserCircle, Menu } from 'lucide-react';
-import { useMobileNav } from './MobileNavProvider';
+import { Moon, Sun, Bell, UserCircle } from 'lucide-react';
 import styles from './Header.module.css';
 
 const routeNames: Record<string, string> = {
-    '/': 'Início / Dashboard',
-    '/prenatal': 'Pré-natal (Gestantes)',
-    '/child-care': 'Puericultura (Crianças)',
+    '/': 'Início',
+    '/prenatal': 'Pré-natal',
+    '/child-care': 'Puericultura',
     '/womens-health': 'Saúde da Mulher',
     '/elderly-health': 'Saúde do Idoso',
-    '/chronic': 'Hipertensão e Diabetes',
+    '/wound-care': 'Curativos',
+    '/chronic': 'Crônicos',
     '/vaccination': 'Vacinação',
-    '/ciap-search': 'Buscador CIAP-2',
-    '/norms': 'Biblioteca de Normas'
+    '/ciap-search': 'Busca CIAP-2',
+    '/norms': 'Normas',
+    '/evolucao': 'Evolução SOAP',
+    '/unit-management': 'Gestão da Unidade',
+    '/vigilancia': 'Vigilância',
 };
 
 export default function Header() {
     const pathname = usePathname();
-    const { toggleSidebar } = useMobileNav();
     const [isDark, setIsDark] = useState(false);
 
     useEffect(() => {
-        // Check initial system or local storage preference if needed
-        const savedTheme = localStorage.getItem('theme');
+        const saved = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        if (saved === 'dark' || (!saved && prefersDark)) {
             setIsDark(true);
             document.documentElement.setAttribute('data-theme', 'dark');
         }
     }, []);
 
     const toggleTheme = () => {
-        const newMode = !isDark;
-        setIsDark(newMode);
-
-        if (newMode) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.removeAttribute('data-theme');
-            localStorage.setItem('theme', 'light');
-        }
+        const next = !isDark;
+        setIsDark(next);
+        document.documentElement.setAttribute('data-theme', next ? 'dark' : '');
+        localStorage.setItem('theme', next ? 'dark' : 'light');
     };
 
-    const title = routeNames[pathname] || 'Guia Aps';
+    const title = routeNames[pathname] ?? 'Guia APS';
 
     return (
         <header className={styles.header}>
-            <div className={styles.leftContent}>
-                <button className={styles.menuToggle} onClick={toggleSidebar}>
-                    <Menu size={24} />
-                </button>
-                <h1 className={styles.pageTitle}>{title}</h1>
+            <div className={styles.left}>
+                <div className={styles.avatar}>
+                    <UserCircle size={30} />
+                </div>
+                <div className={styles.titleGroup}>
+                    <span className={styles.appName}>Guia <span className={styles.appAccent}>APS</span></span>
+                    <span className={styles.pageTitle}>{title}</span>
+                </div>
             </div>
 
-            <div className={styles.rightContent}>
-                <div className={styles.searchBar}>
-                    <Search size={18} className={styles.searchIcon} />
-                    <input
-                        type="text"
-                        placeholder="Busca rápida..."
-                        className={styles.searchInput}
-                    />
-                </div>
-
-                <div className={styles.actions}>
-                    <button className={styles.iconButton} onClick={toggleTheme} aria-label="Toggle theme" title="Alternar tema">
-                        {isDark ? <Sun size={20} /> : <Moon size={20} />}
-                    </button>
-
-                    <button className={styles.iconButton} aria-label="Notifications">
-                        <Bell size={20} />
-                        <span className={styles.notificationBadge}></span>
-                    </button>
-
-                    <div className={styles.userProfile}>
-                        <UserCircle size={32} className={styles.userIcon} />
-                        <div className={styles.userInfo}>
-                            <span className={styles.userName}>Enfermeira</span>
-                            <span className={styles.userRole}>Coren-UF 123456</span>
-                        </div>
-                    </div>
-                </div>
+            <div className={styles.actions}>
+                <button className={styles.iconBtn} onClick={toggleTheme} aria-label="Alternar tema">
+                    {isDark ? <Sun size={18} /> : <Moon size={18} />}
+                </button>
+                <button className={styles.bellBtn} aria-label="Notificações">
+                    <Bell size={18} />
+                    <span className={styles.dot} />
+                </button>
             </div>
         </header>
     );
