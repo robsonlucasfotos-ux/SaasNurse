@@ -1,51 +1,118 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import OpenAI from 'openai';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { ciap2Database } from '@/data/ciap2';
 
-export const maxDuration = 60; // Standard GPT-4 response can take time
+export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
-// we will return a mock response or a helpful error.
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || 'dummy_key',
-});
 
-const SYSTEM_PROMPT = `Você é o "NurseAI", um assistente de suporte à decisão clínica para Enfermeiros da Atenção Primária à Saúde (APS) no Brasil.
-Sua inteligência é baseada exclusivamente nos Protocolos do Ministério da Saúde, Cadernos de Atenção Básica, PCDTs e Resoluções do COFEN (Conselho Federal de Enfermagem).
+const ciap2Context = ciap2Database.map(c => `${c.code}: ${c.name} (${c.category})`).join('\n');
 
-REGRAS RÍGIDAS:
-1. Responda dúvidas baseadas estritamente em protocolos técnicos e na Lei do Exercício Profissional da Enfermagem (Lei 7.498/86).
-2. Se a pergunta não for sobre saúde, clínica, enfermagem ou gestão do SUS, responda EXATAMENTE: "Sou um modelo consultivo treinado exclusivamente para questões de saúde e enfermagem. Não estou autorizado a responder sobre outros temas."
-3. Mencione, quando apropriado, que você utiliza tecnologia avançada da OpenAI para processamento de linguagem natural aplicada à saúde.
-4. Sempre que possível, cite o CIAP-2 correspondente à queixa ou agravo.`;
+const BASE_PROMPT = `Você é o "NurseAI", um assistente de suporte à decisão clínica para Enfermeiros da Atenção Primária à Saúde (APS) no Brasil, treinado com dados oficiais (MS, COFEN, CIAP-2).
 
-export async function POST(req: Request) {
+REGRAS:
+1. Responda APENAS dúvidas sobre saúde, enfermagem, gestão clínica ou APS.
+2. Se perguntado sobre assuntos fora desse escopo, responda: "Sou um modelo consultivo treinado exclusivamente para a Atenção Primária em Saúde. Não estou autorizado a responder sobre esse tema."
+3. Sempre que possível, cite o código CIAP-2 correspondente utilizando a seguinte base de dados CIAP-2:
+${ciap2Context}
+4. Seja direto, objetivo e técnico.
+
+CONTEXTO DA CLÍNICA DO USUÁRIO (dados em tempo real):
+---
+`;
+
+export async function POST(req: NextRequest) {
+    // 1. Parse do body
+    let message: string;
     try {
-        const { message } = await req.json();
-
+        const body = await req.json();
+        message = (body?.message || '').trim();
         if (!message) {
-            return NextResponse.json({ error: 'Message is required' }, { status: 400 });
+            return NextResponse.json({ error: 'Mensagem é obrigatória.' }, { status: 400 });
         }
+    } catch {
+        return NextResponse.json({ error: 'Body inválido.' }, { status: 400 });
+    }
 
-        if (!process.env.OPENAI_API_KEY) {
-            // Return a simulated response if no API key is provided for demonstration
-            return NextResponse.json({
-                reply: "Parece que a chave da API da OpenAI não está configurada no ambiente. Para funcionar plenamente, adicione a OPENAI_API_KEY no arquivo .env.local.\n\nSimulação de resposta: " + (message.toLowerCase().includes('enfermagem') || message.toLowerCase().includes('saúde') || message.toLowerCase().includes('ciap') || message.toLowerCase().includes('paciente') ? "De acordo com os cadernos de Atenção Básica, o correto é realizar a avaliação integral do paciente e registrar as condutas (CIAP-2)." : "Sou um modelo consultivo treinado exclusivamente para questões de enfermagem. Não estou autorizado a responder sobre outros temas.")
-            });
+    // 2. Buscar contexto Supabase (RAG) — falha silenciosa
+    let dbContext = 'Dados do banco não disponíveis nesta sessão.';
+    try {
+        const cookieStore = await cookies();
+        const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            {
+                cookies: {
+                    getAll() { return cookieStore.getAll(); },
+                    setAll(cookiesToSet) {
+                        try {
+                            cookiesToSet.forEach(({ name, value, options }) =>
+                                cookieStore.set(name, value, options)
+                            );
+                        } catch { /* ignorar em Server Components */ }
+                    }
+                }
+            }
+        );
+
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user) {
+            const [resPregnant, resChildren, resInventory] = await Promise.allSettled([
+                supabase.rpc('get_pregnant_stats', { p_user_id: user.id }),
+                supabase.rpc('get_children_stats', { p_user_id: user.id }),
+                supabase.from('inventory_notes').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+            ]);
+
+            const pStats = resPregnant.status === 'fulfilled' && resPregnant.value.data ? resPregnant.value.data[0] : null;
+            const cStats = resChildren.status === 'fulfilled' && resChildren.value.data ? resChildren.value.data[0] : null;
+
+            const pregnant_str = pStats ? `Total: ${pStats.total}. (1º Tri: ${pStats.trimestre_1}, 2º Tri: ${pStats.trimestre_2}, 3º Tri: ${pStats.trimestre_3})` : '0';
+            const children_str = cStats ? `Total: ${cStats.total_criancas}. (Até 6 meses: ${cStats.ate_6_meses}, 6 a 12 meses: ${cStats.de_6_a_12_meses}, 1 a 2 anos: ${cStats.de_1_a_2_anos})` : '0';
+            const inventory = resInventory.status === 'fulfilled' ? (resInventory.value.count ?? 0) : 0;
+
+            dbContext = `
+- Enfermeiro ID: ${user.id}
+- Gestantes no Pré-natal: ${pregnant_str}
+- Crianças na Puericultura: ${children_str}
+- Notas de Estoque/Almoxarifado: ${inventory}
+`;
+        } else {
+            dbContext = 'Usuário não autenticado — dados da clínica indisponíveis.';
         }
+    } catch (ragErr) {
+        console.error('[NurseAI] Erro RAG:', ragErr);
+    }
 
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-4o', // or gpt-4-turbo
-            messages: [
-                { role: 'system', content: SYSTEM_PROMPT },
-                { role: 'user', content: message }
-            ],
-            temperature: 0.2, // Low temperature for more deterministic, protocol-based answers
+    // 3. Chamar a OpenAI — sem pré-validação da chave (deixar a própria lib lidar com erros de autenticação)
+    try {
+        const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
         });
 
-        const reply = completion.choices[0]?.message?.content || 'Não foi possível gerar uma resposta.';
+        const completion = await openai.chat.completions.create({
+            model: 'gpt-4o',
+            messages: [
+                { role: 'system', content: BASE_PROMPT + dbContext },
+                { role: 'user', content: message }
+            ],
+            temperature: 0.3,
+            max_tokens: 1024,
+        });
+
+        const reply = completion.choices[0]?.message?.content?.trim()
+            || 'Não foi possível gerar uma resposta no momento.';
 
         return NextResponse.json({ reply });
-    } catch (error) {
-        console.error('Chat API Error:', error);
-        return NextResponse.json({ error: 'Erro ao processar a requisição.' }, { status: 500 });
+
+    } catch (err: any) {
+        console.error('[NurseAI] Erro OpenAI:', err?.status, err?.message);
+
+        let userMessage = 'Ocorreu um erro temporário. Tente novamente em instantes.';
+        if (err?.status === 401) userMessage = 'Chave de API inválida. Contate o administrador.';
+        if (err?.status === 429) userMessage = 'Limite de uso atingido. Aguarde alguns segundos e tente novamente.';
+
+        return NextResponse.json({ reply: userMessage });
     }
 }

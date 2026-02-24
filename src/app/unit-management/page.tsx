@@ -1,191 +1,224 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createClient } from '@/utils/supabase/client';
 import {
-    Package,
-    AlertCircle,
-    CheckCircle2,
     Plus,
-    Minus,
-    Filter,
-    ShoppingCart,
-    MapPin
+    Trash2,
+    Palette,
+    Loader2,
+    Package
 } from 'lucide-react';
 
-interface StockItem {
+interface Note {
     id: string;
-    name: string;
-    quantity: number;
-    minQuantity: number;
-    sector: 'Sala de Vacina' | 'Refeitório' | 'Salas Clínicas' | 'Limpeza' | 'Escritório';
-    unit: string;
+    title: string;
+    content: string;
+    color: string;
 }
 
-const initialStock: StockItem[] = [
-    { id: '1', name: 'Luvas de Procedimento (M)', quantity: 45, minQuantity: 50, sector: 'Salas Clínicas', unit: 'Caixas' },
-    { id: '2', name: 'Seringas 5ml', quantity: 120, minQuantity: 100, sector: 'Sala de Vacina', unit: 'Unid' },
-    { id: '3', name: 'Agulhas 25x7', quantity: 80, minQuantity: 200, sector: 'Sala de Vacina', unit: 'Unid' },
-    { id: '4', name: 'Álcool 70% (1L)', quantity: 5, minQuantity: 10, sector: 'Salas Clínicas', unit: 'Frascos' },
-    { id: '5', name: 'Máscaras Descartáveis', quantity: 300, minQuantity: 100, sector: 'Salas Clínicas', unit: 'Unid' },
-    { id: '6', name: 'Café (500g)', quantity: 12, minQuantity: 5, sector: 'Refeitório', unit: 'Pacotes' },
-    { id: '7', name: 'Copo Descartável', quantity: 2, minQuantity: 10, sector: 'Refeitório', unit: 'Pacotes' },
-    { id: '8', name: 'Alvejante (5L)', quantity: 2, minQuantity: 4, sector: 'Limpeza', unit: 'Frascos' },
-    { id: '9', name: 'Saco de Lixo Infectante', quantity: 15, minQuantity: 20, sector: 'Limpeza', unit: 'Rolos' },
-    { id: '10', name: 'Papel A4', quantity: 8, minQuantity: 10, sector: 'Escritório', unit: 'Resmas' },
-    { id: '11', name: 'Caneta Azul', quantity: 3, minQuantity: 12, sector: 'Escritório', unit: 'Unid' },
+const COLORS = [
+    '#ffffff', // Branco
+    '#fecaca', // Vermelho claro (Urgente)
+    '#fef08a', // Amarelo (Atenção)
+    '#bbf7d0', // Verde (Ok)
+    '#bfdbfe', // Azul (Informativo)
+    '#e9d5ff'  // Roxo
 ];
 
 export default function UnitManagementPage() {
-    const [stock, setStock] = useState<StockItem[]>(initialStock);
-    const [filterSector, setFilterSector] = useState<string>('Todos');
+    const supabase = createClient();
+    const [notes, setNotes] = useState<Note[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
 
-    const updateQuantity = (id: string, delta: number) => {
-        setStock(prev => prev.map(item =>
-            item.id === id ? { ...item, quantity: Math.max(0, item.quantity + delta) } : item
-        ));
+    const [isAdding, setIsAdding] = useState(false);
+    const [newTitle, setNewTitle] = useState('');
+    const [newContent, setNewContent] = useState('');
+    const [newColor, setNewColor] = useState(COLORS[0]);
+
+    useEffect(() => {
+        fetchNotes();
+    }, []);
+
+    const fetchNotes = async () => {
+        setIsLoading(true);
+        try {
+            const { data: userData } = await supabase.auth.getUser();
+            if (!userData.user) return;
+
+            const { data, error } = await supabase
+                .from('inventory_notes')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            if (data) setNotes(data);
+        } catch (error) {
+            console.error('Erro ao buscar notas:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const filteredStock = filterSector === 'Todos'
-        ? stock
-        : stock.filter(item => item.sector === filterSector);
+    const handleSaveNote = async () => {
+        if (!newTitle.trim() && !newContent.trim()) {
+            setIsAdding(false);
+            return;
+        }
 
-    const lowStockItems = stock.filter(item => item.quantity <= item.minQuantity);
+        setIsSaving(true);
+        try {
+            const { data: userData } = await supabase.auth.getUser();
+            if (!userData.user) throw new Error("Usuário não autenticado");
+
+            const { error } = await supabase
+                .from('inventory_notes')
+                .insert([{
+                    user_id: userData.user.id,
+                    title: newTitle || 'Sem Título',
+                    content: newContent,
+                    color: newColor
+                }]);
+
+            if (error) throw error;
+
+            // Limpa form
+            setNewTitle('');
+            setNewContent('');
+            setNewColor(COLORS[0]);
+            setIsAdding(false);
+            fetchNotes();
+        } catch (error) {
+            console.error('Erro ao salvar nota:', error);
+            alert('Falha ao salvar anotação.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteNote = async (id: string) => {
+        if (!confirm('Deseja excluir este Post-it?')) return;
+        try {
+            const { error } = await supabase.from('inventory_notes').delete().eq('id', id);
+            if (error) throw error;
+            setNotes(notes.filter(n => n.id !== id));
+        } catch (error) {
+            console.error('Erro ao excluir:', error);
+        }
+    };
 
     return (
-        <div className="flex flex-col h-full gap-6">
-            <div className="flex justify-between items-center">
+        <div className="flex flex-col h-full gap-6 pb-20">
+            <div className="flex justify-between items-end">
                 <div>
-                    <h2>Gestão da Unidade</h2>
-                    <p className="text-muted">Controle de insumos, materiais e estoque por setor.</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                    <button className="btn btn-outline flex items-center gap-2">
-                        <ShoppingCart size={18} /> Pedido de Material
-                        {lowStockItems.length > 0 && (
-                            <span className="bg-red-500 text-white rounded-full px-2 py-0.5 text-[10px]">
-                                {lowStockItems.length}
-                            </span>
-                        )}
-                    </button>
+                    <h2 className="text-2xl font-bold flex items-center gap-2">
+                        <Package className="text-primary" />
+                        Pedidos e Estoque
+                    </h2>
+                    <p className="text-muted text-sm mt-1">Quadro de anotações ágeis (Estilo Keep)</p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Alertas Críticos */}
-                <div className="lg:col-span-1 flex flex-col gap-4">
-                    <div className="card border-l-4 border-red-500 bg-red-50/30">
-                        <h3 className="flex items-center gap-2 text-red-600 mb-4">
-                            <AlertCircle size={20} /> Atenção: Reposição Necessária
-                        </h3>
-                        <div className="flex flex-col gap-2">
-                            {lowStockItems.length === 0 ? (
-                                <p className="text-sm text-muted">Todos os itens em nível seguro.</p>
-                            ) : (
-                                lowStockItems.map(item => (
-                                    <div key={item.id} className="text-sm flex justify-between p-2 bg-white rounded border border-red-100 shadow-sm">
-                                        <span>{item.name}</span>
-                                        <span className="font-bold text-red-600">{item.quantity} {item.unit}</span>
-                                    </div>
-                                ))
-                            )}
-                        </div>
+            {/* Take a note input */}
+            <div className="max-w-2xl mx-auto w-full">
+                {!isAdding ? (
+                    <div
+                        onClick={() => setIsAdding(true)}
+                        className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg border border-gray-200 dark:border-gray-700 rounded-xl p-4 cursor-text transition-shadow flex items-center text-muted"
+                    >
+                        Criar um novo pedido de material...
                     </div>
+                ) : (
+                    <div
+                        className="bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-3 animate-in fade-in"
+                        style={{ backgroundColor: isDarkColor(newColor) ? newColor : undefined, background: !isDarkColor(newColor) ? newColor : undefined }} // simplificando a cor
+                    >
+                        <input
+                            type="text"
+                            placeholder="Título (ex: Pedido Farmácia)"
+                            className="bg-transparent border-none text-lg font-bold focus:outline-none focus:ring-0 placeholder:text-black/40 text-black w-full"
+                            value={newTitle}
+                            onChange={(e) => setNewTitle(e.target.value)}
+                            autoFocus
+                        />
+                        <textarea
+                            placeholder="Descreva os itens (ex: 5 caixas de luvas M...)"
+                            className="bg-transparent border-none focus:outline-none focus:ring-0 resize-none placeholder:text-black/50 text-black w-full min-h-[80px]"
+                            value={newContent}
+                            onChange={(e) => setNewContent(e.target.value)}
+                        />
 
-                    <div className="card">
-                        <h3 className="flex items-center gap-2 mb-4">
-                            <Filter size={18} /> Filtrar por Setor
-                        </h3>
-                        <div className="flex flex-col gap-2">
-                            {['Todos', 'Sala de Vacina', 'Refeitório', 'Salas Clínicas', 'Limpeza', 'Escritório'].map(sector => (
+                        <div className="flex justify-between items-center mt-2">
+                            <div className="flex gap-2">
+                                {COLORS.map(c => (
+                                    <button
+                                        key={c}
+                                        type="button"
+                                        onClick={() => setNewColor(c)}
+                                        className={`w-6 h-6 rounded-full border-2 transition-transform ${newColor === c ? 'scale-125 border-gray-400' : 'border-black/10'}`}
+                                        style={{ backgroundColor: c }}
+                                        aria-label={`Cor ${c}`}
+                                    />
+                                ))}
+                            </div>
+                            <div className="flex gap-2">
                                 <button
-                                    key={sector}
-                                    onClick={() => setFilterSector(sector)}
-                                    className={`p-3 rounded text-left transition-all border ${filterSector === sector ? 'bg-primary text-white border-primary' : 'hover:bg-surface border-transparent'}`}
+                                    onClick={() => setIsAdding(false)}
+                                    className="btn btn-ghost text-black hover:bg-black/5 text-sm py-1"
                                 >
-                                    <div className="flex items-center gap-2">
-                                        <MapPin size={16} /> {sector}
-                                    </div>
+                                    Cancelar
                                 </button>
-                            ))}
+                                <button
+                                    onClick={handleSaveNote}
+                                    disabled={isSaving}
+                                    className="btn bg-black text-white hover:bg-black/80 text-sm py-1 flex items-center gap-2"
+                                >
+                                    {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Salvar'}
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                {/* Lista de Estoque */}
-                <div className="lg:col-span-2">
-                    <div className="card h-full">
-                        <div className="mb-4 flex justify-between items-center">
-                            <h3>Inventário de Insumos</h3>
-                            <span className="text-xs text-muted">{filteredStock.length} itens listados</span>
-                        </div>
-
-                        <div className="overflow-x-auto border rounded">
-                            <table className="w-full text-left text-sm min-w-[500px]">
-                                <thead className="bg-surface text-muted">
-                                    <tr>
-                                        <th className="p-3">Insumo</th>
-                                        <th className="p-3">Setor</th>
-                                        <th className="p-3 text-center">Quantidade</th>
-                                        <th className="p-3 text-right">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-border">
-                                    {filteredStock.map(item => {
-                                        const isLow = item.quantity <= item.minQuantity;
-                                        return (
-                                            <tr key={item.id} className="hover:bg-surface-hover">
-                                                <td className="p-3">
-                                                    <div className="flex flex-col">
-                                                        <span className="font-bold">{item.name}</span>
-                                                        <span className="text-[10px] text-muted">Mínimo: {item.minQuantity} {item.unit}</span>
-                                                    </div>
-                                                </td>
-                                                <td className="p-3">
-                                                    <span className="text-[10px] px-2 py-1 bg-muted rounded-full uppercase font-bold">
-                                                        {item.sector}
-                                                    </span>
-                                                </td>
-                                                <td className="p-3 text-center">
-                                                    <div className={`inline-flex items-center gap-2 font-bold ${isLow ? 'text-red-600' : 'text-green-600'}`}>
-                                                        {isLow && <AlertCircle size={14} />}
-                                                        {item.quantity} {item.unit}
-                                                    </div>
-                                                </td>
-                                                <td className="p-3 text-right">
-                                                    <div className="flex justify-end gap-1">
-                                                        <button
-                                                            onClick={() => updateQuantity(item.id, -1)}
-                                                            className="p-1 hover:bg-surface-hover rounded text-red-500"
-                                                        >
-                                                            <Minus size={16} />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => updateQuantity(item.id, 1)}
-                                                            className="p-1 hover:bg-surface-hover rounded text-green-500"
-                                                        >
-                                                            <Plus size={16} />
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                )}
             </div>
 
-            <div className="mt-auto p-4 bg-muted rounded-lg flex items-start gap-4">
-                <div className="bg-primary/10 p-2 rounded">
-                    <CheckCircle2 className="text-primary" size={24} />
+            {/* Masonry Grid */}
+            {isLoading ? (
+                <div className="flex justify-center py-12 text-primary">
+                    <Loader2 size={32} className="animate-spin" />
                 </div>
-                <div>
-                    <h4 className="text-sm font-bold">Dica de Gestão</h4>
-                    <p className="text-xs text-muted">Mantenha o estoque atualizado diariamente para que o sistema possa prever o tempo médio de consumo e automatizar o pedido de materiais junto ao almoxarifado central.</p>
+            ) : notes.length === 0 ? (
+                <div className="text-center py-12 text-muted">
+                    <Package size={48} className="mx-auto mb-4 opacity-20" />
+                    <p>Nenhuma anotação de estoque ainda.</p>
                 </div>
-            </div>
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-start">
+                    {notes.map(note => (
+                        <div
+                            key={note.id}
+                            className="group relative rounded-xl p-4 shadow-sm border border-black/5 transition-all hover:shadow-md"
+                            style={{ backgroundColor: note.color, color: '#000' }}
+                        >
+                            <h3 className="font-bold text-lg mb-2 pr-6">{note.title}</h3>
+                            <p className="text-sm whitespace-pre-wrap opacity-80">{note.content}</p>
+
+                            <button
+                                onClick={() => handleDeleteNote(note.id)}
+                                className="absolute top-3 right-3 p-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-black/5 hover:bg-black/10 rounded-full text-black/60 hover:text-red-600"
+                                title="Excluir anotação"
+                            >
+                                <Trash2 size={16} />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
+}
+
+// Utility para ajuste de cores escuro/claro ignorado para o MVP, vamos forçar texto preto nos post-its (Google Keep behavior)
+function isDarkColor(hex: string) {
+    return false; // Todos os COLORS escolhidos acima são claros/pastéis, então o texto pode ser sempre preto.
 }

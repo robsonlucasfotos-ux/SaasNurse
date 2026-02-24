@@ -7,7 +7,7 @@ import {
     Home, HeartPulse, Thermometer, Search, Grid3x3,
     X, Baby, ShieldAlert, Stethoscope, Syringe,
     AlertTriangle, Package, BookOpen, FileText, FilePen,
-    Heart
+    Heart, BarChart3
 } from 'lucide-react';
 import styles from './BottomNav.module.css';
 
@@ -20,6 +20,7 @@ const clinicModules = [
     { href: '/womens-health', label: 'Saúde da Mulher', icon: Heart, color: '#f43f5e' },
     { href: '/vigilancia', label: 'Vigilância', icon: AlertTriangle, color: '#ef4444' },
     { href: '/unit-management', label: 'Gestão da Unidade', icon: Package, color: '#6366f1' },
+    { href: '/gestao-estrategica', label: 'Gestão Estratégica', icon: BarChart3, color: '#8b5cf6' },
 ];
 
 const toolModules = [

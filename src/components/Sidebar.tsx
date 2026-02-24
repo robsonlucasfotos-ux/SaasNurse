@@ -5,7 +5,8 @@ import { usePathname } from 'next/navigation';
 import {
   Home, Baby, Activity, HeartPulse,
   Syringe, FileText, BookOpen, ShieldAlert,
-  Stethoscope, AlertTriangle, FilePen, Package, Thermometer
+  Stethoscope, AlertTriangle, FilePen, Package, Thermometer,
+  BarChart3
 } from 'lucide-react';
 import { useMobileNav } from './MobileNavProvider';
 import styles from './Sidebar.module.css';
@@ -19,6 +20,7 @@ const navItems = [
   { href: '/chronic', label: 'Hipertensão/Diabetes', icon: Stethoscope },
   { href: '/vaccination', label: 'Vacinação', icon: Syringe },
   { href: '/unit-management', label: 'Gestão da Unidade', icon: Package },
+  { href: '/gestao-estrategica', label: 'Gestão Estratégica', icon: BarChart3 },
   { href: '/vigilancia', label: 'Vigilância', icon: AlertTriangle },
 ];
 

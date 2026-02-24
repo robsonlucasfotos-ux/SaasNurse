@@ -48,7 +48,9 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(url)
     }
 
-    // Verificar se a sessão do dispositivo ainda é válida (proteção máx 2 sessões)
+    // VERIFICAÇÃO DE DISPOSITIVOS TEMPORARIAMENTE SUSPENSA
+    // Essa camada de segurança (limitar 2 acessos) estava derrubando a conta de testes
+    /*
     if (user) {
         const deviceId = request.cookies.get('device_id')?.value;
         if (deviceId) {
@@ -72,6 +74,7 @@ export async function middleware(request: NextRequest) {
             }
         }
     }
+    */
 
     return supabaseResponse
 }

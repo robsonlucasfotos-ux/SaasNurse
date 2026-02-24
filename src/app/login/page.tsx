@@ -51,13 +51,10 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-background px-4">
             <div className="card w-full max-w-sm p-8 flex flex-col items-center">
-                <div className="bg-primary/10 p-4 rounded-full mb-6">
+                <div className="bg-primary/10 p-4 rounded-full mb-4">
                     <Activity size={32} className="text-primary" />
                 </div>
-                <h1 className="text-2xl font-bold text-center mb-2">Guia APS Health</h1>
-                <p className="text-muted text-sm text-center mb-8">
-                    Acesso exclusivo para profissionais de saúde gerenciarem protocolos e evoluções.
-                </p>
+                <h1 className="text-2xl font-bold text-center mb-8">Guia APS</h1>
 
                 {error && (
                     <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg mb-4 w-full text-center font-medium">
@@ -102,10 +99,6 @@ export default function LoginPage() {
                         {isLoading ? <Loader2 className="animate-spin" size={20} /> : 'Acessar Sistema'}
                     </button>
                 </form>
-
-                <p className="text-xs text-muted text-center mt-8 px-4">
-                    O sistema limita a operação a um máximo de (2) dispositivos simultâneos por razões de segurança de dados (LGPD).
-                </p>
             </div>
         </div>
     );
