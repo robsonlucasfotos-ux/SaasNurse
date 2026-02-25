@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Thermometer, Camera, Save, Image as ImageIcon, Trash2, Loader2 } from 'lucide-react';
+import { Bandage, Camera, Save, Image as ImageIcon, Trash2, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 interface WoundEvolution {
@@ -202,7 +202,7 @@ export default function WoundCarePage() {
 
             <div className="card">
                 <h3 className="flex items-center gap-2 mb-4" style={{ color: '#ef4444' }}>
-                    <Thermometer size={22} /> Sistema RYB (Protocolo de Curativos)
+                    <Bandage size={22} /> Sistema RYB (Protocolo de Curativos)
                 </h3>
                 <p className="text-sm text-muted mb-6">Guia rápido para conduta em leito de ferida crônica conforme características do tecido.</p>
 

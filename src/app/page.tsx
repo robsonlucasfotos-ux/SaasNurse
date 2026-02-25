@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import {
   HeartPulse, Baby, ShieldAlert, Stethoscope,
-  Syringe, AlertTriangle, Package, Thermometer,
+  Syringe, AlertTriangle, Package, Bandage,
   FileText, FilePen, BookOpen, Search, Heart, Activity, Settings,
   Users, MessageCircle, ExternalLink, ArrowRight, Bell, BarChart3
 } from 'lucide-react';
@@ -38,7 +38,7 @@ const clinicCards = [
     href: '/wound-care',
     label: 'Curativos',
     sub: 'Sistema RYB e Fotos',
-    icon: Thermometer,
+    icon: Bandage,
     gradient: 'linear-gradient(135deg, #f43f5e 0%, #fb923c 100%)',
     glow: '#f43f5e40',
   },

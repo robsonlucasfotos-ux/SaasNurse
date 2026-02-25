@@ -207,50 +207,7 @@ export default function PrenatalPage() {
         }
     };
 
-    const handleScheduleWhatsApp = async (patient: PregnantWoman) => {
-        if (!patient.phone) {
-            alert('Esta paciente não possui telefone cadastrado.');
-            return;
-        }
-
-        const dateStr = prompt('Data para disparo da mensagem (DD/MM/AAAA):', new Date().toLocaleDateString('pt-BR'));
-        if (!dateStr) return;
-
-        // Converter DD/MM/AAAA para YYYY-MM-DD
-        const parts = dateStr.split('/');
-        if (parts.length !== 3) {
-            alert('Formato de data inválido. Use DD/MM/AAAA.');
-            return;
-        }
-        const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
-
-        const defaultMessage = `Olá ${patient.name.split(' ')[0]}, aqui é do Posto de Saúde. Lembramos que você tem consulta ou exame agendado conosco.`;
-        const customMessage = prompt('Digite a mensagem a ser enviada no WhatsApp:', defaultMessage);
-
-        if (!customMessage) return;
-
-        try {
-            const res = await fetch('/api/whatsapp-reminder', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    patientName: patient.name,
-                    phone: patient.phone,
-                    message: customMessage,
-                    date: formattedDate
-                })
-            });
-            const data = await res.json();
-            if (data.success) {
-                alert('Mensagem programada com sucesso na fila do WhatsApp!');
-            } else {
-                throw new Error(data.error);
-            }
-        } catch (error: any) {
-            console.error(error);
-            alert(`Falha ao programar WhatsApp: ${error.message}`);
-        }
-    };
+    // Função de disparo WhatsApp removida conforme solicitado
 
     return (
         <div className="flex flex-col h-full gap-6 pb-20">
@@ -375,87 +332,79 @@ export default function PrenatalPage() {
                             ))}
                         </div>
                     </div>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse min-w-[700px]">
-                            <thead>
-                                <tr className="border-b dark:border-gray-700 text-sm font-semibold text-muted">
-                                    <th className="p-3">Nome</th>
-                                    <th className="p-3">Gestação (DUM)</th>
-                                    <th className="p-3">Risco</th>
-                                    <th className="p-3">Contato</th>
-                                    <th className="p-3 text-center">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {patients.filter(p => {
-                                    if (patientFilterTab === 'Todas') return true;
-                                    const tri = calculateTrimester(p.dum);
-                                    return tri === patientFilterTab;
-                                }).map(p => {
-                                    const dumDate = p.dum ? new Date(p.dum) : null;
-                                    const diffTime = dumDate ? Math.abs(Date.now() - dumDate.getTime()) : 0;
-                                    const weeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
-                                    const months = Math.floor(weeks / 4.34524);
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                        {patients.filter(p => {
+                            if (patientFilterTab === 'Todas') return true;
+                            const tri = calculateTrimester(p.dum);
+                            return tri === patientFilterTab;
+                        }).map(p => {
+                            const dumDate = p.dum ? new Date(p.dum) : null;
+                            const diffTime = dumDate ? Math.abs(Date.now() - dumDate.getTime()) : 0;
+                            const weeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
+                            const months = Math.floor(weeks / 4.34524);
 
-                                    return (
-                                        <tr key={p.id} className="border-b dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                                            <td className="p-3 font-medium text-gray-800 dark:text-gray-200">{p.name} {p.age ? `(${p.age}a)` : ''}</td>
-                                            <td className="p-3 text-primary font-semibold">
-                                                {weeks ? (
-                                                    <div className="flex flex-col">
-                                                        <span>{weeks} semanas</span>
-                                                        <span className="text-xs text-muted font-normal">({months} {months === 1 ? 'mês' : 'meses'})</span>
-                                                    </div>
-                                                ) : 'N/A'}
-                                            </td>
-                                            <td className="p-3">
-                                                <div className="flex flex-col items-start gap-1">
-                                                    <span className={`px-2 py-1 rounded text-xs font-bold w-fit ${p.risk_level === 'Alto' ? 'bg-red-100 text-red-700 border border-red-200' :
-                                                        p.risk_level === 'Moderado' ? 'bg-orange-100 text-orange-700 border border-orange-200' :
-                                                            'bg-green-100 text-green-700 border border-green-200'
-                                                        }`}>
-                                                        {p.risk_level}
-                                                    </span>
-                                                    {p.risk_level === 'Alto' && p.risk_reason && (
-                                                        <span className="text-[10px] text-red-600 leading-tight max-w-[150px]" title={p.risk_reason}>
-                                                            <strong className="opacity-80">Motivo:</strong> {p.risk_reason}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td className="p-3 text-muted">{p.phone || '-'}</td>
-                                            <td className="p-3 text-center flex justify-center gap-2">
-                                                <button
-                                                    onClick={() => openClinicalModal(p)}
-                                                    className="p-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors flex items-center gap-1 text-xs"
-                                                    title={`Acompanhamento Clínico de ${p.name}`}
-                                                >
-                                                    <CheckCircle size={16} /> <span className="hidden xl:inline">Acompanhar</span>
-                                                </button>
-                                                <button
-                                                    onClick={() => handleScheduleWhatsApp(p)}
-                                                    className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
-                                                    title={`Agendar Lembrete WhatsApp para ${p.name}`}
-                                                >
-                                                    <MessageCircle size={16} />
-                                                </button>
-                                                {p.phone && (
-                                                    <a
-                                                        href={`https://wa.me/55${p.phone.replace(/\D/g, '')}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                                                        title={`Abrir WhatsApp de ${p.name}`}
-                                                    >
-                                                        <ExternalLink size={16} />
-                                                    </a>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                            return (
+                                <div key={p.id} className="border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-col gap-3 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                                    <div className={`absolute top-0 left-0 w-1 h-full ${p.risk_level === 'Alto' ? 'bg-red-500' : p.risk_level === 'Moderado' ? 'bg-orange-500' : 'bg-green-500'}`}></div>
+                                    <div className="flex justify-between items-start pl-2">
+                                        <div className="flex-1 pr-2">
+                                            <h4 className="font-bold text-gray-800 dark:text-gray-100 text-lg leading-tight">{p.name}</h4>
+                                            <span className="text-sm text-muted">{p.age ? `${p.age} anos` : 'Idade não informada'}</span>
+                                        </div>
+                                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${p.risk_level === 'Alto' ? 'bg-red-100 text-red-700' : p.risk_level === 'Moderado' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
+                                            {p.risk_level}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex flex-col gap-1 pl-2">
+                                        <div className="flex items-center gap-2">
+                                            <Calculator size={14} className="text-primary/70" />
+                                            <span className="text-primary font-semibold text-sm">
+                                                {weeks ? `${weeks} semanas (${months} meses)` : 'DUM não informada'}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <MessageCircle size={14} className="text-muted" />
+                                            <span className="text-sm text-muted">
+                                                {p.phone || 'Sem telefone cadastrado'}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {p.risk_level === 'Alto' && p.risk_reason && (
+                                        <div className="bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-400 text-xs p-2 rounded-lg border border-red-100 dark:border-red-900/30 mt-1 ml-2">
+                                            <strong className="opacity-80 block mb-0.5">Motivo Alto Risco:</strong>
+                                            {p.risk_reason}
+                                        </div>
+                                    )}
+
+                                    <div className="mt-auto pt-3 border-t dark:border-gray-800 flex gap-2 pl-2">
+                                        <button
+                                            onClick={() => openClinicalModal(p)}
+                                            className="flex-1 btn btn-primary flex items-center justify-center gap-2 text-sm py-2 bg-purple-600 hover:bg-purple-700 border-none text-white shadow-sm"
+                                        >
+                                            <CheckCircle size={16} /> Acompanhar
+                                        </button>
+
+                                        {p.phone ? (
+                                            <a
+                                                href={`https://wa.me/55${p.phone.replace(/\D/g, '')}?text=Olá ${encodeURIComponent(p.name.split(' ')[0])}, aqui é do Posto de Saúde.`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="btn bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center aspect-square px-3 border-none shadow-sm"
+                                                title={`Chamar no WhatsApp`}
+                                            >
+                                                <MessageCircle size={18} />
+                                            </a>
+                                        ) : (
+                                            <button disabled className="btn bg-gray-200 dark:bg-gray-800 text-gray-400 flex items-center justify-center aspect-square px-3 border-none cursor-not-allowed" title="Sem telefone">
+                                                <MessageCircle size={18} />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             )}
