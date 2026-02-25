@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { cofenMedications, authorizedExams } from '@/data/cofen-meds';
-import { Search, Phone } from 'lucide-react';
+import { Search, Phone, AlertTriangle, Calculator, CheckCircle, HeartPulse, MessageCircle, Plus, Users, Loader2 } from 'lucide-react';
 
 interface PregnantWoman {
     id: string;
