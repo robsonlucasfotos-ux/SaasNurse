@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import {
     Stethoscope, Plus, Search, Loader2, AlertTriangle,
     CheckCircle, MessageCircle, ExternalLink, Calendar,
-    Activity, TrendingDown, Thermometer, Droplets
+    Activity, TrendingDown, Thermometer, Droplets, Phone
 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 
@@ -260,6 +260,17 @@ export default function ChronicPage() {
                                                 <div className="flex flex-col">
                                                     <span className="font-bold">{p.name}</span>
                                                     <span className="text-[10px] text-muted">{p.age} anos</span>
+                                                    {p.phone && (
+                                                        <a
+                                                            href={`https://wa.me/55${p.phone?.replace(/\D/g, '')}?text=Olá ${encodeURIComponent(p.name.split(' ')[0])}, aqui é a enfermagem da UBS. Tudo bem?`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex items-center gap-1 mt-1 text-[10px] text-[#25D366] hover:underline font-semibold"
+                                                            title="Chamar no WhatsApp"
+                                                        >
+                                                            <MessageCircle size={11} /> {p.phone}
+                                                        </a>
+                                                    )}
                                                 </div>
                                             </td>
                                             <td className="p-3 text-sm">
@@ -307,9 +318,21 @@ export default function ChronicPage() {
                                             </td>
                                             <td className="p-3 text-center">
                                                 <div className="flex justify-center gap-2">
-                                                    <button onClick={() => window.open(`https://wa.me/55${p.phone?.replace(/\D/g, '')}`, '_blank')} className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                                                        <MessageCircle size={14} />
-                                                    </button>
+                                                    {p.phone ? (
+                                                        <a
+                                                            href={`https://wa.me/55${p.phone?.replace(/\D/g, '')}?text=Olá ${encodeURIComponent(p.name.split(' ')[0])}, aqui é a enfermagem da UBS. Tudo bem?`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="p-2 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-lg transition-colors"
+                                                            title={`Chamar ${p.name} no WhatsApp`}
+                                                        >
+                                                            <MessageCircle size={14} />
+                                                        </a>
+                                                    ) : (
+                                                        <button disabled className="p-2 bg-gray-200 dark:bg-gray-700 text-gray-400 rounded-lg cursor-not-allowed" title="Sem telefone cadastrado">
+                                                            <MessageCircle size={14} />
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </td>
                                         </tr>

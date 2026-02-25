@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Baby, AlertCircle, Info, Plus, CalendarDays, Loader2, Users, CheckCircle, AlertTriangle, MessageCircle, ExternalLink } from 'lucide-react';
+import { Baby, AlertCircle, Info, Plus, CalendarDays, Loader2, Users, CheckCircle, AlertTriangle, MessageCircle } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 
 interface Child {
@@ -259,6 +259,7 @@ export default function ChildCare() {
                                     <th className="p-3">Nome da Criança</th>
                                     <th className="p-3">Idade Exata (Automático)</th>
                                     <th className="p-3">Atributos / Risco</th>
+                                    <th className="p-3">Responsável / WhatsApp</th>
                                     <th className="p-3 text-center">Ações</th>
                                 </tr>
                             </thead>
@@ -272,10 +273,6 @@ export default function ChildCare() {
                                     else if (age.months < 12) ageColor = 'bg-orange-100 text-orange-700';
                                     else if (age.months < 24) ageColor = 'bg-blue-100 text-blue-700';
 
-                                    const handleWhatsApp = () => {
-                                        if (!c.guardian_phone) return;
-                                        window.open(`https://wa.me/55${c.guardian_phone.replace(/\D/g, '')}`, '_blank');
-                                    };
 
                                     return (
                                         <tr key={c.id} className="border-b dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
@@ -296,15 +293,34 @@ export default function ChildCare() {
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="p-3 text-muted text-sm max-w-[150px] truncate">{c.observations || '-'}</td>
-                                            <td className="p-3 text-center flex justify-center gap-2">
+                                            <td className="p-3 text-muted text-sm max-w-[150px] truncate">
+                                                {c.guardian_name || '-'}
                                                 {c.guardian_phone && (
-                                                    <button
-                                                        onClick={handleWhatsApp}
-                                                        className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                                                        title={`Abrir WhatsApp de ${c.guardian_name}`}
+                                                    <a
+                                                        href={`https://wa.me/55${c.guardian_phone.replace(/\D/g, '')}?text=Olá ${encodeURIComponent((c.guardian_name || 'responsável').split(' ')[0])}, aqui é a enfermagem da UBS.`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center gap-1 mt-0.5 text-[10px] text-[#25D366] hover:underline font-semibold"
+                                                        title="Chamar no WhatsApp"
                                                     >
-                                                        <ExternalLink size={16} />
+                                                        <MessageCircle size={10} /> {c.guardian_phone}
+                                                    </a>
+                                                )}
+                                            </td>
+                                            <td className="p-3 text-center flex justify-center gap-2">
+                                                {c.guardian_phone ? (
+                                                    <a
+                                                        href={`https://wa.me/55${c.guardian_phone.replace(/\D/g, '')}?text=Olá ${encodeURIComponent((c.guardian_name || 'responsável').split(' ')[0])}, aqui é a enfermagem da UBS. Gostaria de falar sobre ${encodeURIComponent(c.name)}.`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="p-2 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-lg transition-colors"
+                                                        title={`WhatsApp de ${c.guardian_name}`}
+                                                    >
+                                                        <MessageCircle size={16} />
+                                                    </a>
+                                                ) : (
+                                                    <button disabled className="p-2 bg-gray-200 dark:bg-gray-700 text-gray-400 rounded-lg cursor-not-allowed" title="Sem telefone">
+                                                        <MessageCircle size={16} />
                                                     </button>
                                                 )}
                                             </td>

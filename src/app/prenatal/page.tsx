@@ -2,7 +2,7 @@
 
 import { createClient } from '@/utils/supabase/client';
 import { cofenMedications, authorizedExams } from '@/data/cofen-meds';
-import { Search } from 'lucide-react';
+import { Search, Phone } from 'lucide-react';
 
 interface PregnantWoman {
     id: string;
@@ -208,7 +208,7 @@ export default function PrenatalPage() {
         }
     };
 
-    // Função de disparo WhatsApp removida conforme solicitado
+
 
     return (
         <div className="flex flex-col h-full gap-6 pb-20">
@@ -416,10 +416,21 @@ export default function PrenatalPage() {
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <MessageCircle size={14} className="text-muted" />
-                                                <span className="text-sm text-muted">
+                                                <Phone size={14} className="text-muted" />
+                                                <span className="text-sm text-muted flex-1">
                                                     {p.phone || 'Sem telefone cadastrado'}
                                                 </span>
+                                                {p.phone ? (
+                                                    <a
+                                                        href={`https://wa.me/55${p.phone.replace(/\D/g, '')}?text=Olá ${encodeURIComponent(p.name.split(' ')[0])}, aqui é a enfermagem do Posto de Saúde. Tudo bem?`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center justify-center w-8 h-8 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white shadow-sm transition-colors flex-shrink-0"
+                                                        title="Chamar no WhatsApp"
+                                                    >
+                                                        <MessageCircle size={15} />
+                                                    </a>
+                                                ) : null}
                                             </div>
                                         </div>
 
@@ -437,22 +448,6 @@ export default function PrenatalPage() {
                                             >
                                                 <CheckCircle size={16} /> Acompanhar
                                             </button>
-
-                                            {p.phone ? (
-                                                <a
-                                                    href={`https://wa.me/55${p.phone.replace(/\D/g, '')}?text=Olá ${encodeURIComponent(p.name.split(' ')[0])}, aqui é do Posto de Saúde.`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="btn bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center aspect-square px-3 border-none shadow-sm"
-                                                    title={`Chamar no WhatsApp`}
-                                                >
-                                                    <MessageCircle size={18} />
-                                                </a>
-                                            ) : (
-                                                <button disabled className="btn bg-gray-200 dark:bg-gray-800 text-gray-400 flex items-center justify-center aspect-square px-3 border-none cursor-not-allowed" title="Sem telefone">
-                                                    <MessageCircle size={18} />
-                                                </button>
-                                            )}
                                         </div>
                                     </div>
                                 );
