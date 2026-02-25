@@ -4,9 +4,9 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
 async function runSQL() {
-    // Usar as credenciais do Pooler Supabase (formato postgreSQL uri)
-    // Precisaremos montar isso pegando as variáveis soltas.
-    // Como estamos sem a string exata, montaremos através das docs do db
+    const args = process.argv.slice(2);
+    const filename = args[0] || 'supabase_whatsapp_reminders.sql';
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const regex = /https:\/\/(.*?)\.supabase\.co/;
     const match = supabaseUrl.match(regex);
@@ -17,7 +17,6 @@ async function runSQL() {
         return;
     }
 
-    // URI padrão Supabase Transaction Pooler
     const connectionString = `postgresql://postgres.[${refId}]:${process.env.SUPABASE_DB_PASSWORD}@aws-0-sa-east-1.pooler.supabase.com:6543/postgres`;
 
     const client = new Client({ connectionString });
@@ -25,10 +24,10 @@ async function runSQL() {
     try {
         await client.connect();
 
-        const sql = fs.readFileSync('supabase_whatsapp_reminders.sql', 'utf8');
+        const sql = fs.readFileSync(filename, 'utf8');
         await client.query(sql);
 
-        console.log('Tabela whatsapp_reminders criada com sucesso!');
+        console.log(`Arquivo ${filename} executado com sucesso!`);
     } catch (err) {
         console.error('Erro na execução SQL:', err);
     } finally {

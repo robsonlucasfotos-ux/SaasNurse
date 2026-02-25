@@ -1,0 +1,141 @@
+[dotenv@17.3.1] injecting env (33) from ..\.env -- tip: ÔÜÖ´©Å  suppress all logs with { quiet: true }
+Using user ID: aec14f07-9722-49d0-bc29-a579a8bdf16b
+Error inserting Luele Batista Lustosa: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting Claudia Oliveira Araujo: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting Brenda Torres de Oliveira: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting Micaelle dos Santos Antunes: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting Leticia Dinelly Estaquio da Silva: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting Kayllane Souza Soares de Jesus: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting Michelle Silva Moura: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting Jhullyana Nunes da Silva: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting BRENDA KAROLAYNY M. ALCIDES: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting SUZANA KELLY SILVA SABINO: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting MIKAELE DE JESUS VIEIRA: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting LILIAN CARVALHO NONATO DA SILVA: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting KAREM VITORIA RODRIGUES DE SOUSA: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting GEOVANA SANTOS FARIAS: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting DREYSI KELLY DOS SANTOS: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting KETULLIN HORRANA MONTEIRO PONTES: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting LAYANE MARIA FERREIRA TRINDADE: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting ALINE SILVA DE OLIVEIRA: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting JANAINA PEREIRA MENEZES DIAS: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting BRENDA RODRIGUES DE ARAUJO: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting SARAH DAYSE SILVA DOS SANTOS: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting JOANA KARY FERNADES: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Error inserting VITORIA DA CONCEI├ç├âO SOUZA: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}
+Importa├º├úo conclu├¡da com sucesso!

@@ -1,0 +1,55 @@
+
+> aps-nurse-saas@0.1.0 build
+> next build
+
+ÔÜá Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\robso\.gemini\antigravity\scratch\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\robso\.gemini\antigravity\scratch\aps-nurse-saas\package-lock.json
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+ÔÜá The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 2 errors:
+./aps-nurse-saas/src/app/page.tsx:10:20
+Ecmascript file had an error
+   8 | import styles from './page.module.css';
+   9 | import { createClient } from '@/utils/supabase/client';
+> 10 | import { useState, useEffect } from 'react';
+     |                    ^^^^^^^^^
+  11 |
+  12 | interface Prompt {
+  13 |   title: string;
+
+You're importing a component that needs `useEffect`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+
+
+
+
+./aps-nurse-saas/src/app/page.tsx:10:10
+Ecmascript file had an error
+   8 | import styles from './page.module.css';
+   9 | import { createClient } from '@/utils/supabase/client';
+> 10 | import { useState, useEffect } from 'react';
+     |          ^^^^^^^^
+  11 |
+  12 | interface Prompt {
+  13 |   title: string;
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+
+
+
+
+    at <unknown> (./aps-nurse-saas/src/app/page.tsx:10:20)
+    at <unknown> (./aps-nurse-saas/src/app/page.tsx:10:10)

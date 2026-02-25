@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS public.pregnant_women (
   risk_level TEXT DEFAULT 'Habitual', -- Habitual, Moderado, Alto
   risk_reason TEXT,
   dum DATE NOT NULL, -- Data da Última Menstruação (Usado para cálculo da Idade Gestacional)
+  clinical_data JSONB DEFAULT '{}', -- Checklists de trimestre e observações (CPF, Endereço, etc)
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 

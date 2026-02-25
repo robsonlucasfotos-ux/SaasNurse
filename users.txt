@@ -1,0 +1,147 @@
+[dotenv@17.3.1] injecting env (1) from .env.local -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+[dotenv@17.3.1] injecting env (33) from ..\.env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+[
+  {
+    "id": "aec14f07-9722-49d0-bc29-a579a8bdf16b",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "corretora.plenavida@gmail.com",
+    "email_confirmed_at": "2026-02-22T16:19:07.266057Z",
+    "phone": "",
+    "confirmed_at": "2026-02-22T16:19:07.266057Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "email_verified": true,
+      "name": "NETE"
+    },
+    "identities": null,
+    "created_at": "2026-02-22T16:19:07.22706Z",
+    "updated_at": "2026-02-22T16:19:07.267535Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "9eb7208e-483a-4dfa-90c3-30dd3ebe76c1",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "cliente4gmonitora@gmail.com",
+    "email_confirmed_at": "2026-02-21T19:55:26.072003Z",
+    "phone": "",
+    "confirmed_at": "2026-02-21T19:55:26.072003Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "email_verified": true,
+      "full_name": "Cliente 4G",
+      "name": "alexandre"
+    },
+    "identities": null,
+    "created_at": "2026-02-21T19:55:26.068758Z",
+    "updated_at": "2026-02-22T16:19:07.507984Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "9e437567-b6df-40f5-b7ac-1afaf1da3e2a",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "robsondemelosouzaa@gmail.com",
+    "email_confirmed_at": "2026-02-21T19:55:25.754924Z",
+    "phone": "",
+    "confirmed_at": "2026-02-21T19:55:25.754924Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "email_verified": true,
+      "full_name": "Robson",
+      "name": "robson"
+    },
+    "identities": null,
+    "created_at": "2026-02-21T19:55:25.752265Z",
+    "updated_at": "2026-02-22T16:19:06.39373Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "94d484c9-3008-4ad6-8d3e-cc215cd802a6",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "valeriaassessoria1@gmail.com",
+    "email_confirmed_at": "2026-02-21T19:55:25.358987Z",
+    "phone": "",
+    "confirmed_at": "2026-02-21T19:55:25.358987Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "email_verified": true,
+      "full_name": "Valéria"
+    },
+    "identities": null,
+    "created_at": "2026-02-21T19:55:25.356259Z",
+    "updated_at": "2026-02-21T19:56:04.124281Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "dd234e18-29a5-489a-a609-eb04d13f1c21",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "envasadoracasadoalambique@gmail.com",
+    "email_confirmed_at": "2026-02-21T19:55:24.904374Z",
+    "phone": "",
+    "confirmed_at": "2026-02-21T19:55:24.904374Z",
+    "last_sign_in_at": "2026-02-24T17:01:03.659565Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "email_verified": true,
+      "full_name": "Tom",
+      "name": "tom"
+    },
+    "identities": null,
+    "created_at": "2026-02-21T19:55:24.855985Z",
+    "updated_at": "2026-02-24T19:52:59.199885Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "73bdf7da-9a61-4442-af05-aade8aaac8aa",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "robsonlucasfotos@gmail.com",
+    "email_confirmed_at": "2026-02-16T21:52:21.804333Z",
+    "phone": "",
+    "confirmed_at": "2026-02-16T21:52:21.804333Z",
+    "last_sign_in_at": "2026-02-22T20:45:11.256881Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "email_verified": true,
+      "name": "robson"
+    },
+    "identities": null,
+    "created_at": "2026-02-16T21:52:21.782787Z",
+    "updated_at": "2026-02-22T22:43:12.967056Z",
+    "is_anonymous": false
+  }
+]

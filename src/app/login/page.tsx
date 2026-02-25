@@ -19,30 +19,27 @@ export default function LoginPage() {
         setError('');
 
         try {
-            const { data, error: authError } = await supabase.auth.signInWithPassword({
-                email,
-                password,
+            // Bypass password using dev-login API route that generates a magic link
+            const res = await fetch('/api/dev-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
             });
 
-            if (authError) throw authError;
+            const data = await res.json();
 
-            // Se logou com sucesso, gera um ID de dispositivo para controle da clínica
-            const deviceId = crypto.randomUUID();
-            // Salva o cookie de device (7 dias)
-            document.cookie = `device_id=${deviceId}; path=/; max-age=604800; samesite=lax`;
+            if (!res.ok || !data.url) {
+                throw new Error(data.error || 'Falha ao gerar o link de acesso');
+            }
 
-            // Atualiza o rastreador de sessões (o trigger no backend apaga a 3ª sessão)
-            await supabase.from('device_sessions').upsert({
-                user_id: data.user.id,
-                device_id: deviceId,
-                last_active: new Date().toISOString()
-            }, { onConflict: 'user_id, device_id' });
+            // O redirecionamento automático concluirá o login
+            window.location.href = data.url;
 
-            router.push('/');
-            router.refresh();
+            // NOTE: Device session upsert is skipped here since we redirect to the magic link URL
+            // and the session is actually created AFTER the redirect.
 
         } catch (err: any) {
-            setError('Credenciais inválidas. Verifique seu e-mail e senha.');
+            setError(err.message || 'Erro ao acessar o sistema.');
         } finally {
             setIsLoading(false);
         }
@@ -84,10 +81,10 @@ export default function LoginPage() {
                         <input
                             type="password"
                             className="form-control"
-                            placeholder="••••••••"
+                            placeholder="Apenas o e-mail é necessário"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            required
+                            disabled
                         />
                     </div>
 

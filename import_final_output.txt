@@ -1,0 +1,9 @@
+[dotenv@17.3.1] injecting env (1) from .env.local -- tip: ­ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+[dotenv@17.3.1] injecting env (33) from ..\.env -- tip: ÔÜÖ´©Å  override existing env vars with { override: true }
+ALERTA: O Supabase ainda n├úo conseguiu ler a tabela, ou ela n├úo foi criada direito:
+{
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.pregnant_women' in the schema cache"
+}

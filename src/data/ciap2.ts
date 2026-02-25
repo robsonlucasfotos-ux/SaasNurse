@@ -2,6 +2,9 @@ export interface CIAP2Code {
     code: string;
     name: string;
     category: string;
+    isNotificacaoCompulsoria?: boolean;
+    prazoNotificacao?: 'IMEDIATA' | 'SEMANAL';
+    linkFichaSinan?: string;
 }
 
 export const ciap2Database: CIAP2Code[] = [
