@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { HeartPulse, CheckCircle, AlertTriangle, Plus, Users, Calculator, Loader2, MessageCircle, Calendar, ExternalLink } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
+import { cofenMedications, authorizedExams } from '@/data/cofen-meds';
+import { Search } from 'lucide-react';
 
 interface PregnantWoman {
     id: string;
@@ -64,7 +64,8 @@ const trimestersData = [
 export default function PrenatalPage() {
     const supabase = createClient();
     const [activeTab, setActiveTab] = useState(1);
-    const [patientFilterTab, setPatientFilterTab] = useState<'Todas' | 1 | 2 | 3>('Todas');
+    const [medQuery, setMedQuery] = useState('');
+    const [patientFilterTab, setPatientFilterTab] = useState<'Todas' | 1 | 2 | 3 | 'Cofen'>('Todas');
 
     // Gestantes state
     const [patients, setPatients] = useState<PregnantWoman[]>([]);
@@ -321,91 +322,143 @@ export default function PrenatalPage() {
                             <Users size={18} /> Gestantes Acompanhadas ({patients.length})
                         </h3>
                         <div className="flex flex-wrap gap-2">
-                            {(['Todas', 1, 2, 3] as const).map(tab => (
+                            {(['Todas', 1, 2, 3, 'Cofen'] as const).map(tab => (
                                 <button
                                     key={tab}
                                     onClick={() => setPatientFilterTab(tab)}
                                     className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${patientFilterTab === tab ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'}`}
                                 >
-                                    {tab === 'Todas' ? 'Todas' : `${tab}º Trimestre`}
+                                    {tab === 'Todas' ? 'Todas' : tab === 'Cofen' ? 'Prescrições Enfermeiro (801/26)' : `${tab}º Trimestre`}
                                 </button>
                             ))}
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                        {patients.filter(p => {
-                            if (patientFilterTab === 'Todas') return true;
-                            const tri = calculateTrimester(p.dum);
-                            return tri === patientFilterTab;
-                        }).map(p => {
-                            const dumDate = p.dum ? new Date(p.dum) : null;
-                            const diffTime = dumDate ? Math.abs(Date.now() - dumDate.getTime()) : 0;
-                            const weeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
-                            const months = Math.floor(weeks / 4.34524);
 
-                            return (
-                                <div key={p.id} className="border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-col gap-3 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
-                                    <div className={`absolute top-0 left-0 w-1 h-full ${p.risk_level === 'Alto' ? 'bg-red-500' : p.risk_level === 'Moderado' ? 'bg-orange-500' : 'bg-green-500'}`}></div>
-                                    <div className="flex justify-between items-start pl-2">
-                                        <div className="flex-1 pr-2">
-                                            <h4 className="font-bold text-gray-800 dark:text-gray-100 text-lg leading-tight">{p.name}</h4>
-                                            <span className="text-sm text-muted">{p.age ? `${p.age} anos` : 'Idade não informada'}</span>
-                                        </div>
-                                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${p.risk_level === 'Alto' ? 'bg-red-100 text-red-700' : p.risk_level === 'Moderado' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
-                                            {p.risk_level}
-                                        </span>
-                                    </div>
+                    {patientFilterTab === 'Cofen' ? (
+                        <div className="animate-in fade-in slide-in-from-bottom-2">
+                            <div className="relative mb-6">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
+                                <input
+                                    type="text"
+                                    placeholder="Buscar por medicação, sintoma ou necessidade (Ex: Sífilis, Amoxicilina, ITU...)"
+                                    className="form-control pl-10 h-12 text-base shadow-sm focus:border-green-500"
+                                    value={medQuery}
+                                    onChange={(e) => setMedQuery(e.target.value)}
+                                />
+                            </div>
 
-                                    <div className="flex flex-col gap-1 pl-2">
-                                        <div className="flex items-center gap-2">
-                                            <Calculator size={14} className="text-primary/70" />
-                                            <span className="text-primary font-semibold text-sm">
-                                                {weeks ? `${weeks} semanas (${months} meses)` : 'DUM não informada'}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {cofenMedications.filter(m =>
+                                    m.name.toLowerCase().includes(medQuery.toLowerCase()) ||
+                                    m.category.toLowerCase().includes(medQuery.toLowerCase()) ||
+                                    m.indication.toLowerCase().includes(medQuery.toLowerCase())
+                                ).map((m, idx) => (
+                                    <div key={idx} className="p-4 border rounded-xl bg-green-50/30 dark:bg-green-900/10 border-green-100 dark:border-green-900/30 transition-all hover:shadow-sm">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <span className="text-[10px] font-bold uppercase tracking-wider bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-100 px-2 py-0.5 rounded">
+                                                {m.category}
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <MessageCircle size={14} className="text-muted" />
-                                            <span className="text-sm text-muted">
-                                                {p.phone || 'Sem telefone cadastrado'}
-                                            </span>
-                                        </div>
+                                        <h4 className="font-bold text-gray-800 dark:text-gray-100">{m.name}</h4>
+                                        <p className="text-sm text-green-700 dark:text-green-400 font-semibold mt-1">{m.dosage}</p>
+                                        <p className="text-xs text-muted mt-2 leading-relaxed"><strong>Indicação:</strong> {m.indication}</p>
                                     </div>
+                                ))}
+                            </div>
 
-                                    {p.risk_level === 'Alto' && p.risk_reason && (
-                                        <div className="bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-400 text-xs p-2 rounded-lg border border-red-100 dark:border-red-900/30 mt-1 ml-2">
-                                            <strong className="opacity-80 block mb-0.5">Motivo Alto Risco:</strong>
-                                            {p.risk_reason}
+                            <div className="mt-8 pt-6 border-t dark:border-gray-800">
+                                <h4 className="font-bold text-primary flex items-center gap-2 mb-4">
+                                    <CheckCircle size={18} /> Exames que o Enfermeiro pode solicitar (2026)
+                                </h4>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {authorizedExams.map((ex, idx) => (
+                                        <div key={idx} className="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800/40">
+                                            <strong className="text-xs block mb-1 text-gray-500">{ex.type}</strong>
+                                            <p className="text-sm">{ex.items}</p>
                                         </div>
-                                    )}
-
-                                    <div className="mt-auto pt-3 border-t dark:border-gray-800 flex gap-2 pl-2">
-                                        <button
-                                            onClick={() => openClinicalModal(p)}
-                                            className="flex-1 btn btn-primary flex items-center justify-center gap-2 text-sm py-2 bg-purple-600 hover:bg-purple-700 border-none text-white shadow-sm"
-                                        >
-                                            <CheckCircle size={16} /> Acompanhar
-                                        </button>
-
-                                        {p.phone ? (
-                                            <a
-                                                href={`https://wa.me/55${p.phone.replace(/\D/g, '')}?text=Olá ${encodeURIComponent(p.name.split(' ')[0])}, aqui é do Posto de Saúde.`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="btn bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center aspect-square px-3 border-none shadow-sm"
-                                                title={`Chamar no WhatsApp`}
-                                            >
-                                                <MessageCircle size={18} />
-                                            </a>
-                                        ) : (
-                                            <button disabled className="btn bg-gray-200 dark:bg-gray-800 text-gray-400 flex items-center justify-center aspect-square px-3 border-none cursor-not-allowed" title="Sem telefone">
-                                                <MessageCircle size={18} />
-                                            </button>
-                                        )}
-                                    </div>
+                                    ))}
                                 </div>
-                            );
-                        })}
-                    </div>
+                                <p className="mt-6 text-[10px] text-muted italic p-3 border rounded bg-gray-50 dark:bg-gray-800/30">
+                                    Fonte: Resolução Cofen nº 801/2026 e 802/2026. A prescrição deve estar fundamentada em protocolo local e Processo de Enfermagem.
+                                </p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                            {patients.filter(p => {
+                                if (patientFilterTab === 'Todas') return true;
+                                const tri = calculateTrimester(p.dum);
+                                return tri === patientFilterTab;
+                            }).map(p => {
+                                const dumDate = p.dum ? new Date(p.dum) : null;
+                                const diffTime = dumDate ? Math.abs(Date.now() - dumDate.getTime()) : 0;
+                                const weeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
+                                const months = Math.floor(weeks / 4.34524);
+
+                                return (
+                                    <div key={p.id} className="border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-col gap-3 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                                        <div className={`absolute top-0 left-0 w-1 h-full ${p.risk_level === 'Alto' ? 'bg-red-500' : p.risk_level === 'Moderado' ? 'bg-orange-500' : 'bg-green-500'}`}></div>
+                                        <div className="flex justify-between items-start pl-2">
+                                            <div className="flex-1 pr-2">
+                                                <h4 className="font-bold text-gray-800 dark:text-gray-100 text-lg leading-tight">{p.name}</h4>
+                                                <span className="text-sm text-muted">{p.age ? `${p.age} anos` : 'Idade não informada'}</span>
+                                            </div>
+                                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${p.risk_level === 'Alto' ? 'bg-red-100 text-red-700' : p.risk_level === 'Moderado' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
+                                                {p.risk_level}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex flex-col gap-1 pl-2">
+                                            <div className="flex items-center gap-2">
+                                                <Calculator size={14} className="text-primary/70" />
+                                                <span className="text-primary font-semibold text-sm">
+                                                    {weeks ? `${weeks} semanas (${months} meses)` : 'DUM não informada'}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <MessageCircle size={14} className="text-muted" />
+                                                <span className="text-sm text-muted">
+                                                    {p.phone || 'Sem telefone cadastrado'}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {p.risk_level === 'Alto' && p.risk_reason && (
+                                            <div className="bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-400 text-xs p-2 rounded-lg border border-red-100 dark:border-red-900/30 mt-1 ml-2">
+                                                <strong className="opacity-80 block mb-0.5">Motivo Alto Risco:</strong>
+                                                {p.risk_reason}
+                                            </div>
+                                        )}
+
+                                        <div className="mt-auto pt-3 border-t dark:border-gray-800 flex gap-2 pl-2">
+                                            <button
+                                                onClick={() => openClinicalModal(p)}
+                                                className="flex-1 btn btn-primary flex items-center justify-center gap-2 text-sm py-2 bg-purple-600 hover:bg-purple-700 border-none text-white shadow-sm"
+                                            >
+                                                <CheckCircle size={16} /> Acompanhar
+                                            </button>
+
+                                            {p.phone ? (
+                                                <a
+                                                    href={`https://wa.me/55${p.phone.replace(/\D/g, '')}?text=Olá ${encodeURIComponent(p.name.split(' ')[0])}, aqui é do Posto de Saúde.`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="btn bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center aspect-square px-3 border-none shadow-sm"
+                                                    title={`Chamar no WhatsApp`}
+                                                >
+                                                    <MessageCircle size={18} />
+                                                </a>
+                                            ) : (
+                                                <button disabled className="btn bg-gray-200 dark:bg-gray-800 text-gray-400 flex items-center justify-center aspect-square px-3 border-none cursor-not-allowed" title="Sem telefone">
+                                                    <MessageCircle size={18} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </div>
             )}
 
