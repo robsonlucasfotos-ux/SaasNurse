@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { cofenMedications, authorizedExams } from '@/data/cofen-meds';
 import { Search, Phone } from 'lucide-react';
