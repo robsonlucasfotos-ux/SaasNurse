@@ -28,6 +28,9 @@ ALTER TABLE pregnant_women ADD COLUMN IF NOT EXISTS dpp DATE;
 ALTER TABLE pregnant_women ADD COLUMN IF NOT EXISTS dum DATE;
 ALTER TABLE pregnant_women ALTER COLUMN dum DROP NOT NULL;
 
+-- Permitir valores customizados de risk_level na tabela children (remover restrição se existir)
+ALTER TABLE children DROP CONSTRAINT IF EXISTS children_risk_level_check;
+
 -- IMPORTANTE: Substitua '3627165a-d301-4384-83bf-8b0e2b8c42fa' pelo seu User ID do Supabase (Acesse Authentication -> Users)
 DO $$
 DECLARE
