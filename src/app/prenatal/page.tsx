@@ -81,6 +81,8 @@ export default function PrenatalPage() {
     const [clinicalData, setClinicalData] = useState<any>({});
     const [isSavingClinical, setIsSavingClinical] = useState(false);
     const [newNote, setNewNote] = useState('');
+    const [newCarePlan, setNewCarePlan] = useState('');
+    const [modalTab, setModalTab] = useState<'checklists' | 'prontuario'>('checklists');
 
     // Add Patient Form State
     const [showForm, setShowForm] = useState(false);
@@ -185,6 +187,8 @@ export default function PrenatalPage() {
         setSelectedPatient(patient);
         setClinicalData(patient.clinical_data || {});
         setNewNote('');
+        setNewCarePlan('');
+        setModalTab('checklists');
     };
 
     const handleClinicalChange = (key: string, value: any) => {
@@ -197,10 +201,14 @@ export default function PrenatalPage() {
         try {
             let updatedClinicalData = { ...clinicalData };
 
-            if (newNote.trim() !== '') {
+            if (newNote.trim() !== '' || newCarePlan.trim() !== '') {
                 const followUps = updatedClinicalData.followUps || [];
                 updatedClinicalData.followUps = [
-                    { date: new Date().toISOString(), text: newNote },
+                    {
+                        date: new Date().toISOString(),
+                        text: newNote,
+                        carePlan: newCarePlan
+                    },
                     ...followUps
                 ];
             }
@@ -556,202 +564,258 @@ export default function PrenatalPage() {
             {selectedPatient && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
                     <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col border border-primary animate-in fade-in zoom-in-95">
-                        <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+                        <div className="p-4 border-b dark:border-gray-800 flex justify-between items-start bg-pink-50/50 dark:bg-pink-900/10">
                             <div>
-                                <h3 className="text-lg font-bold text-primary flex items-center gap-2">
-                                    <CheckCircle size={20} />
-                                    Acompanhamento Clínico: {selectedPatient.name}
+                                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                                    <HeartPulse className="text-pink-600" size={24} />
+                                    Acompanhamento Clínico: <span className="text-pink-600 uppercase">{selectedPatient.name}</span>
                                 </h3>
-                                <p className="text-xs text-muted mt-1">
-                                    <AlertTriangle size={12} className="inline mr-1 text-warning" />
-                                    Prescrição de enfermagem baseada no protocolo de enfermagem conforme nota do Cofen
-                                </p>
+                                <div className="flex items-center gap-2 mt-2 bg-white/80 dark:bg-gray-800/80 px-3 py-1.5 rounded-lg border border-pink-100 dark:border-pink-900/30 w-fit">
+                                    <AlertTriangle size={14} className="text-amber-500" />
+                                    <p className="text-[11px] font-bold text-gray-600 dark:text-gray-400">
+                                        Prescrição de enfermagem baseada no protocolo de enfermagem conforme nota do Cofen
+                                    </p>
+                                </div>
                             </div>
                             <button
                                 onClick={() => setSelectedPatient(null)}
-                                className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
+                                className="p-2 hover:bg-pink-100 dark:hover:bg-pink-900/30 rounded-full transition-colors mt-1"
                             >
-                                <Plus size={20} className="rotate-45" />
+                                <Plus size={24} className="rotate-45 text-pink-600" />
                             </button>
                         </div>
 
-                        <div className="p-6 overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Abas do Modal */}
+                        <div className="flex border-b border-gray-200 dark:border-gray-800 px-6 pt-2">
+                            <button
+                                onClick={() => setModalTab('checklists')}
+                                className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors ${modalTab === 'checklists' ? 'border-pink-600 text-pink-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                            >
+                                Checklists (Trimestres)
+                            </button>
+                            <button
+                                onClick={() => setModalTab('prontuario')}
+                                className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors ${modalTab === 'prontuario' ? 'border-pink-600 text-pink-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                            >
+                                Prontuário e Evolução
+                            </button>
+                        </div>
 
-                            {/* 1º Trimestre */}
-                            <div className="card p-4 border-pink-100 bg-pink-50/50 dark:bg-pink-900/10">
-                                <h4 className="font-semibold text-pink-700 border-b border-pink-200 pb-2 mb-3">1º Trimestre</h4>
+                        <div className="p-6 overflow-y-auto flex-1">
+                            {modalTab === 'checklists' ? (
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                                    {/* 1º Trimestre */}
+                            <div className="card p-4 border-pink-100 bg-pink-50/50 dark:bg-pink-900/10 shadow-none">
+                                <h4 className="font-bold text-pink-700 border-b border-pink-200 pb-2 mb-3">1º Trimestre</h4>
                                 <div className="space-y-3">
-                                    <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" className="mt-1 accent-pink-600" checked={clinicalData?.t1_exames || false} onChange={e => handleClinicalChange('t1_exames', e.target.checked)} />
+                                    <label className="flex items-start gap-2 text-sm cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                        <input type="checkbox" className="mt-1 accent-pink-600 w-4 h-4" checked={clinicalData?.t1_exames || false} onChange={e => handleClinicalChange('t1_exames', e.target.checked)} />
                                         <span>Exames / Ecografia</span>
                                     </label>
-                                    <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" className="mt-1 accent-pink-600" checked={clinicalData?.t1_testes || false} onChange={e => handleClinicalChange('t1_testes', e.target.checked)} />
+                                    <label className="flex items-start gap-2 text-sm cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                        <input type="checkbox" className="mt-1 accent-pink-600 w-4 h-4" checked={clinicalData?.t1_testes || false} onChange={e => handleClinicalChange('t1_testes', e.target.checked)} />
                                         <span>Testes Rápidos</span>
                                     </label>
-                                    <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" className="mt-1 accent-pink-600" checked={clinicalData?.t1_citologico || false} onChange={e => handleClinicalChange('t1_citologico', e.target.checked)} />
+                                    <label className="flex items-start gap-2 text-sm cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                        <input type="checkbox" className="mt-1 accent-pink-600 w-4 h-4" checked={clinicalData?.t1_citologico || false} onChange={e => handleClinicalChange('t1_citologico', e.target.checked)} />
                                         <span>Citológico</span>
                                     </label>
-                                    <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" className="mt-1 accent-pink-600" checked={clinicalData?.t1_teste_mae || false} onChange={e => handleClinicalChange('t1_teste_mae', e.target.checked)} />
+                                    <label className="flex items-start gap-2 text-sm cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                        <input type="checkbox" className="mt-1 accent-pink-600 w-4 h-4" checked={clinicalData?.t1_teste_mae || false} onChange={e => handleClinicalChange('t1_teste_mae', e.target.checked)} />
                                         <span>Teste da Mamãe</span>
                                     </label>
-                                    <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" className="mt-1 accent-pink-600" checked={clinicalData?.t1_vacina || false} onChange={e => handleClinicalChange('t1_vacina', e.target.checked)} />
+                                    <label className="flex items-start gap-2 text-sm cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                        <input type="checkbox" className="mt-1 accent-pink-600 w-4 h-4" checked={clinicalData?.t1_vacina || false} onChange={e => handleClinicalChange('t1_vacina', e.target.checked)} />
                                         <span>Atualização Caderneta de Vacina</span>
                                     </label>
-                                    <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" className="mt-1 accent-pink-600" checked={clinicalData?.t1_odonto || false} onChange={e => handleClinicalChange('t1_odonto', e.target.checked)} />
+                                    <label className="flex items-start gap-2 text-sm cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                        <input type="checkbox" className="mt-1 accent-pink-600 w-4 h-4" checked={clinicalData?.t1_odonto || false} onChange={e => handleClinicalChange('t1_odonto', e.target.checked)} />
                                         <span>Avaliação Odontológica</span>
                                     </label>
 
-                                    <div className="pt-2 border-t border-pink-200/50">
-                                        <p className="text-xs font-semibold text-pink-700 mb-1">Prescrições:</p>
-                                        <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                            <input type="checkbox" className="mt-0.5 accent-pink-600" checked={clinicalData?.t1_sulfato || false} onChange={e => handleClinicalChange('t1_sulfato', e.target.checked)} />
-                                            <span className="text-xs">Sulfato Ferroso</span>
-                                        </label>
-                                        <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                            <input type="checkbox" className="mt-0.5 accent-pink-600" checked={clinicalData?.t1_acido || false} onChange={e => handleClinicalChange('t1_acido', e.target.checked)} />
-                                            <span className="text-xs">Ácido Fólico</span>
-                                        </label>
-                                        <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                            <input type="checkbox" className="mt-0.5 accent-pink-600" checked={clinicalData?.t1_meclisina || false} onChange={e => handleClinicalChange('t1_meclisina', e.target.checked)} />
-                                            <span className="text-xs">Meclisina</span>
-                                        </label>
+                                    <div className="pt-2 border-t border-pink-200/50 mt-1">
+                                        <p className="text-[10px] font-bold text-pink-700 mb-2 uppercase tracking-wider">Prescrições:</p>
+                                        <div className="space-y-1">
+                                            <label className="flex items-start gap-2 text-xs cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                                <input type="checkbox" className="mt-0.5 accent-pink-600 w-3.5 h-3.5" checked={clinicalData?.t1_sulfato || false} onChange={e => handleClinicalChange('t1_sulfato', e.target.checked)} />
+                                                <span>Sulfato Ferroso</span>
+                                            </label>
+                                            <label className="flex items-start gap-2 text-xs cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                                <input type="checkbox" className="mt-0.5 accent-pink-600 w-3.5 h-3.5" checked={clinicalData?.t1_acido || false} onChange={e => handleClinicalChange('t1_acido', e.target.checked)} />
+                                                <span>Ácido Fólico</span>
+                                            </label>
+                                            <label className="flex items-start gap-2 text-xs cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                                <input type="checkbox" className="mt-0.5 accent-pink-600 w-3.5 h-3.5" checked={clinicalData?.t1_meclisina || false} onChange={e => handleClinicalChange('t1_meclisina', e.target.checked)} />
+                                                <span>Meclisina</span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* 2º Trimestre */}
-                            <div className="card p-4 border-purple-100 bg-purple-50/50 dark:bg-purple-900/10">
-                                <h4 className="font-semibold text-purple-700 border-b border-purple-200 pb-2 mb-3">2º Trimestre</h4>
+                            <div className="card p-4 border-purple-100 bg-purple-50/50 dark:bg-purple-900/10 shadow-none">
+                                <h4 className="font-bold text-purple-700 border-b border-purple-200 pb-2 mb-3">2º Trimestre</h4>
                                 <div className="space-y-3">
-                                    <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" className="mt-1 accent-purple-600" checked={clinicalData?.t2_exames || false} onChange={e => handleClinicalChange('t2_exames', e.target.checked)} />
+                                    <label className="flex items-start gap-2 text-sm cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                        <input type="checkbox" className="mt-1 accent-purple-600 w-4 h-4" checked={clinicalData?.t2_exames || false} onChange={e => handleClinicalChange('t2_exames', e.target.checked)} />
                                         <span>Exames / Ecografia</span>
                                     </label>
-                                    <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" className="mt-1 accent-purple-600" checked={clinicalData?.t2_vacina || false} onChange={e => handleClinicalChange('t2_vacina', e.target.checked)} />
+                                    <label className="flex items-start gap-2 text-sm cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                        <input type="checkbox" className="mt-1 accent-purple-600 w-4 h-4" checked={clinicalData?.t2_vacina || false} onChange={e => handleClinicalChange('t2_vacina', e.target.checked)} />
                                         <span>Vacina</span>
                                     </label>
 
-                                    <div className="pt-2 border-t border-purple-200/50">
-                                        <p className="text-xs font-semibold text-purple-700 mb-1">Prescrições:</p>
-                                        <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                            <input type="checkbox" className="mt-0.5 accent-purple-600" checked={clinicalData?.t2_sulfato || false} onChange={e => handleClinicalChange('t2_sulfato', e.target.checked)} />
-                                            <span className="text-xs">Sulfato Ferroso</span>
-                                        </label>
-                                        <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                            <input type="checkbox" className="mt-0.5 accent-purple-600" checked={clinicalData?.t2_calcio || false} onChange={e => handleClinicalChange('t2_calcio', e.target.checked)} />
-                                            <span className="text-xs">Carbonato de Cálcio</span>
-                                        </label>
-                                        <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                            <input type="checkbox" className="mt-0.5 accent-purple-600" checked={clinicalData?.t2_meclisina || false} onChange={e => handleClinicalChange('t2_meclisina', e.target.checked)} />
-                                            <span className="text-xs">Meclisina</span>
-                                        </label>
+                                    <div className="pt-2 border-t border-purple-200/50 mt-1">
+                                        <p className="text-[10px] font-bold text-purple-700 mb-2 uppercase tracking-wider">Prescrições:</p>
+                                        <div className="space-y-1">
+                                            <label className="flex items-start gap-2 text-xs cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                                <input type="checkbox" className="mt-0.5 accent-purple-600 w-3.5 h-3.5" checked={clinicalData?.t2_sulfato || false} onChange={e => handleClinicalChange('t2_sulfato', e.target.checked)} />
+                                                <span>Sulfato Ferroso</span>
+                                            </label>
+                                            <label className="flex items-start gap-2 text-xs cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                                <input type="checkbox" className="mt-0.5 accent-purple-600 w-3.5 h-3.5" checked={clinicalData?.t2_calcio || false} onChange={e => handleClinicalChange('t2_calcio', e.target.checked)} />
+                                                <span>Carbonato de Cálcio</span>
+                                            </label>
+                                            <label className="flex items-start gap-2 text-xs cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                                <input type="checkbox" className="mt-0.5 accent-purple-600 w-3.5 h-3.5" checked={clinicalData?.t2_meclisina || false} onChange={e => handleClinicalChange('t2_meclisina', e.target.checked)} />
+                                                <span>Meclisina</span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* 3º Trimestre */}
-                            <div className="card p-4 border-blue-100 bg-blue-50/50 dark:bg-blue-900/10">
-                                <h4 className="font-semibold text-blue-700 border-b border-blue-200 pb-2 mb-3">3º Trimestre</h4>
+                            <div className="card p-4 border-blue-100 bg-blue-50/50 dark:bg-blue-900/10 shadow-none">
+                                <h4 className="font-bold text-blue-700 border-b border-blue-200 pb-2 mb-3">3º Trimestre</h4>
                                 <div className="space-y-3">
-                                    <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" className="mt-1 accent-blue-600" checked={clinicalData?.t3_exames || false} onChange={e => handleClinicalChange('t3_exames', e.target.checked)} />
+                                    <label className="flex items-start gap-2 text-sm cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                        <input type="checkbox" className="mt-1 accent-blue-600 w-4 h-4" checked={clinicalData?.t3_exames || false} onChange={e => handleClinicalChange('t3_exames', e.target.checked)} />
                                         <span>Exames / Ecografia</span>
                                     </label>
-                                    <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" className="mt-1 accent-blue-600" checked={clinicalData?.t3_teste_mae || false} onChange={e => handleClinicalChange('t3_teste_mae', e.target.checked)} />
+                                    <label className="flex items-start gap-2 text-sm cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                        <input type="checkbox" className="mt-1 accent-blue-600 w-4 h-4" checked={clinicalData?.t3_teste_mae || false} onChange={e => handleClinicalChange('t3_teste_mae', e.target.checked)} />
                                         <span>2ª Coleta do Teste da Mamãe</span>
                                     </label>
-                                    <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" className="mt-1 accent-blue-600" checked={clinicalData?.t3_testes || false} onChange={e => handleClinicalChange('t3_testes', e.target.checked)} />
+                                    <label className="flex items-start gap-2 text-sm cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                        <input type="checkbox" className="mt-1 accent-blue-600 w-4 h-4" checked={clinicalData?.t3_testes || false} onChange={e => handleClinicalChange('t3_testes', e.target.checked)} />
                                         <span>Testes Rápidos</span>
                                     </label>
-                                    <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" className="mt-1 accent-blue-600" checked={clinicalData?.t3_swab || false} onChange={e => handleClinicalChange('t3_swab', e.target.checked)} />
+                                    <label className="flex items-start gap-2 text-sm cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                        <input type="checkbox" className="mt-1 accent-blue-600 w-4 h-4" checked={clinicalData?.t3_swab || false} onChange={e => handleClinicalChange('t3_swab', e.target.checked)} />
                                         <span>Swab Anal</span>
                                     </label>
-                                    <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" className="mt-1 accent-blue-600" checked={clinicalData?.t3_vacina || false} onChange={e => handleClinicalChange('t3_vacina', e.target.checked)} />
+                                    <label className="flex items-start gap-2 text-sm cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                        <input type="checkbox" className="mt-1 accent-blue-600 w-4 h-4" checked={clinicalData?.t3_vacina || false} onChange={e => handleClinicalChange('t3_vacina', e.target.checked)} />
                                         <span>Vacina</span>
                                     </label>
 
-                                    <div className="pt-2 border-t border-blue-200/50">
-                                        <p className="text-xs font-semibold text-blue-700 mb-1">Prescrições:</p>
-                                        <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                            <input type="checkbox" className="mt-0.5 accent-blue-600" checked={clinicalData?.t3_sulfato || false} onChange={e => handleClinicalChange('t3_sulfato', e.target.checked)} />
-                                            <span className="text-xs">Sulfato Ferroso</span>
-                                        </label>
-                                        <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                            <input type="checkbox" className="mt-0.5 accent-blue-600" checked={clinicalData?.t3_acido || false} onChange={e => handleClinicalChange('t3_acido', e.target.checked)} />
-                                            <span className="text-xs">Ácido Fólico</span>
-                                        </label>
-                                        <label className="flex items-start gap-2 text-sm cursor-pointer">
-                                            <input type="checkbox" className="mt-0.5 accent-blue-600" checked={clinicalData?.t3_meclisina || false} onChange={e => handleClinicalChange('t3_meclisina', e.target.checked)} />
-                                            <span className="text-xs">Meclisina</span>
-                                        </label>
+                                    <div className="pt-2 border-t border-blue-200/50 mt-1">
+                                        <p className="text-[10px] font-bold text-blue-700 mb-2 uppercase tracking-wider">Prescrições:</p>
+                                        <div className="space-y-1">
+                                            <label className="flex items-start gap-2 text-xs cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                                <input type="checkbox" className="mt-0.5 accent-blue-600 w-3.5 h-3.5" checked={clinicalData?.t3_sulfato || false} onChange={e => handleClinicalChange('t3_sulfato', e.target.checked)} />
+                                                <span>Sulfato Ferroso</span>
+                                            </label>
+                                            <label className="flex items-start gap-2 text-xs cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                                <input type="checkbox" className="mt-0.5 accent-blue-600 w-3.5 h-3.5" checked={clinicalData?.t3_acido || false} onChange={e => handleClinicalChange('t3_acido', e.target.checked)} />
+                                                <span>Ácido Fólico</span>
+                                            </label>
+                                            <label className="flex items-start gap-2 text-xs cursor-pointer hover:bg-white/50 rounded p-0.5 transition-colors">
+                                                <input type="checkbox" className="mt-0.5 accent-blue-600 w-3.5 h-3.5" checked={clinicalData?.t3_meclisina || false} onChange={e => handleClinicalChange('t3_meclisina', e.target.checked)} />
+                                                <span>Meclisina</span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                                </div>
+                            ) : (
+                                <div className="card p-4 border-gray-100 bg-white dark:bg-gray-800 shadow-none">
+                                    <h4 className="font-bold border-b dark:border-gray-700 pb-2 mb-3 text-gray-800 dark:text-gray-100">Prontuário da Paciente (Acompanhamento)</h4>
 
-                            {/* Evoluções e Notas (Bloco de Notas) */}
-                            <div className="md:col-span-3 card p-4 border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/20">
-                                <h4 className="font-semibold border-b dark:border-gray-700 pb-2 mb-3">Histórico de Acompanhamento (Bloco de Notas)</h4>
-
-                                <div className="mb-4 max-h-60 overflow-y-auto pr-2 flex flex-col gap-3">
+                                <div className="mb-6 max-h-60 overflow-y-auto pr-2 flex flex-col gap-3">
                                     {(!clinicalData?.followUps || clinicalData.followUps.length === 0) ? (
-                                        <p className="text-sm text-gray-500 italic text-center py-4 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+                                        <p className="text-sm text-gray-400 italic text-center py-6 bg-gray-50 dark:bg-gray-900 rounded-lg border border-dashed border-gray-200 dark:border-gray-800">
                                             Nenhuma evolução registrada ainda. O histórico de acompanhamento aparecerá aqui.
                                         </p>
                                     ) : (
                                         clinicalData.followUps.map((note: any, index: number) => (
-                                            <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                                                <div className="flex justify-between items-center mb-1">
-                                                    <span className="text-xs font-semibold text-primary">
+                                            <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                                                <div className="flex justify-between items-center mb-2 pb-1 border-b dark:border-gray-700 border-dashed">
+                                                    <span className="text-xs font-bold text-primary flex items-center gap-1">
+                                                        <CheckCircle size={12} />
                                                         {new Date(note.date).toLocaleDateString('pt-BR')} às {new Date(note.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                                     </span>
                                                 </div>
-                                                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{note.text}</p>
+                                                <div className="space-y-2">
+                                                    {note.text && (
+                                                        <div>
+                                                            <strong className="text-[11px] text-muted block mb-0.5 uppercase">Observações Clínicas:</strong>
+                                                            <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">{note.text}</p>
+                                                        </div>
+                                                    )}
+                                                    {note.carePlan && (
+                                                        <div className="bg-blue-50 dark:bg-blue-900/10 p-2 rounded border border-blue-100 dark:border-blue-900/30">
+                                                            <strong className="text-[11px] text-blue-700 dark:text-blue-400 block mb-0.5 flex items-center gap-1 uppercase">
+                                                                <HeartPulse size={12} /> Plano de Ação / Autocuidado:
+                                                            </strong>
+                                                            <p className="text-sm text-blue-800 dark:text-blue-300 whitespace-pre-wrap leading-relaxed">{note.carePlan}</p>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         ))
                                     )}
                                 </div>
 
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 pt-3 border-t dark:border-gray-700">
-                                    <label className="flex items-center gap-2 text-sm cursor-pointer bg-white dark:bg-gray-800 p-2 border dark:border-gray-700 rounded shadow-sm">
-                                        <input type="checkbox" className="accent-red-500" checked={clinicalData?.obs_hipertensao || false} onChange={e => handleClinicalChange('obs_hipertensao', e.target.checked)} />
-                                        <span className="font-medium text-red-600 dark:text-red-400">Hipertensão</span>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                                    <label className="flex items-center gap-2 text-sm cursor-pointer bg-gray-50 dark:bg-gray-900 p-2 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-white transition-colors">
+                                        <input type="checkbox" className="accent-red-500 w-4 h-4" checked={clinicalData?.obs_hipertensao || false} onChange={e => handleClinicalChange('obs_hipertensao', e.target.checked)} />
+                                        <span className="font-medium text-gray-700 dark:text-gray-300">Hipertensão</span>
                                     </label>
-                                    <label className="flex items-center gap-2 text-sm cursor-pointer bg-white dark:bg-gray-800 p-2 border dark:border-gray-700 rounded shadow-sm">
-                                        <input type="checkbox" className="accent-orange-500" checked={clinicalData?.obs_diabetes || false} onChange={e => handleClinicalChange('obs_diabetes', e.target.checked)} />
-                                        <span className="font-medium text-orange-600 dark:text-orange-400">Diabetes Gestacional</span>
+                                    <label className="flex items-center gap-2 text-sm cursor-pointer bg-gray-50 dark:bg-gray-900 p-2 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-white transition-colors">
+                                        <input type="checkbox" className="accent-orange-500 w-4 h-4" checked={clinicalData?.obs_diabetes || false} onChange={e => handleClinicalChange('obs_diabetes', e.target.checked)} />
+                                        <span className="font-medium text-gray-700 dark:text-gray-300">Diabetes Gestacional</span>
                                     </label>
-                                    <label className="flex items-center gap-2 text-sm cursor-pointer bg-white dark:bg-gray-800 p-2 border dark:border-gray-700 rounded shadow-sm">
-                                        <input type="checkbox" className="accent-yellow-500" checked={clinicalData?.obs_itu || false} onChange={e => handleClinicalChange('obs_itu', e.target.checked)} />
-                                        <span className="font-medium text-yellow-600 dark:text-yellow-400">ITU</span>
+                                    <label className="flex items-center gap-2 text-sm cursor-pointer bg-gray-50 dark:bg-gray-900 p-2 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-white transition-colors">
+                                        <input type="checkbox" className="accent-yellow-500 w-4 h-4" checked={clinicalData?.obs_itu || false} onChange={e => handleClinicalChange('obs_itu', e.target.checked)} />
+                                        <span className="font-medium text-gray-700 dark:text-gray-300">ITU</span>
                                     </label>
-                                    <label className="flex items-center gap-2 text-sm cursor-pointer bg-white dark:bg-gray-800 p-2 border dark:border-gray-700 rounded shadow-sm">
-                                        <input type="checkbox" className="accent-purple-500" checked={clinicalData?.obs_corrimento || false} onChange={e => handleClinicalChange('obs_corrimento', e.target.checked)} />
-                                        <span className="font-medium text-purple-600 dark:text-purple-400">Corrimentos</span>
+                                    <label className="flex items-center gap-2 text-sm cursor-pointer bg-gray-50 dark:bg-gray-900 p-2 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-white transition-colors">
+                                        <input type="checkbox" className="accent-purple-500 w-4 h-4" checked={clinicalData?.obs_corrimento || false} onChange={e => handleClinicalChange('obs_corrimento', e.target.checked)} />
+                                        <span className="font-medium text-gray-700 dark:text-gray-300">Corrimentos</span>
                                     </label>
                                 </div>
 
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-xs font-semibold text-muted ml-1">Nova Anotação (Evolução de Hoje)</label>
-                                    <textarea
-                                        className="form-control"
-                                        placeholder="Digite as observações da consulta de hoje..."
-                                        rows={3}
-                                        value={newNote}
-                                        onChange={e => setNewNote(e.target.value)}
-                                    />
-                                    <span className="text-[10px] text-muted ml-1 mt-1 font-medium">✨ Ao salvar, esta anotação será permanentemente gravada no histórico usando a data e hora atual.</span>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="flex flex-col gap-1.5">
+                                        <label className="text-xs font-bold text-gray-500 ml-1 uppercase">Quadro de Observações</label>
+                                        <textarea
+                                            className="form-control min-h-[120px] resize-none focus:ring-2 focus:ring-primary/20"
+                                            placeholder="Sintomas, exames, queixas da consulta de hoje..."
+                                            value={newNote}
+                                            onChange={e => setNewNote(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                        <label className="text-xs font-bold text-blue-600 ml-1 uppercase">Plano de Ação / Autocuidado</label>
+                                        <textarea
+                                            className="form-control border-blue-200 focus:border-blue-400 bg-blue-50/20 min-h-[120px] resize-none focus:ring-2 focus:ring-blue-100"
+                                            placeholder="o plano de autocuidado, orientações, etc..."
+                                            value={newCarePlan}
+                                            onChange={e => setNewCarePlan(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mt-4 flex items-center gap-2 text-primary font-bold">
+                                    <span className="text-[18px]">✨</span>
+                                    <span className="text-[11px]">Ao salvar, essas anotações serão permanentemente gravadas no prontuário com a data e hora atual.</span>
                                 </div>
                             </div>
+                            )}
                         </div>
 
                         <div className="p-4 border-t dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 flex justify-end gap-3">
