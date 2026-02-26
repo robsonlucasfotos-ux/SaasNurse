@@ -109,7 +109,7 @@ export default function PrenatalPage() {
 
         if (diffWeeks <= 12) return 1;
         if (diffWeeks >= 13 && diffWeeks <= 27) return 2;
-        return 3;
+        return 3; // Cap at max 3
     };
 
     const fetchPatients = async () => {
