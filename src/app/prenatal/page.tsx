@@ -14,6 +14,7 @@ interface PregnantWoman {
     risk_level: string;
     risk_reason: string | null;
     dum: string;
+    dpp?: string | null;
     clinical_data?: any; // JSONB data
     created_at: string;
 }
@@ -92,7 +93,8 @@ export default function PrenatalPage() {
         acs_area: '',
         risk_level: 'Habitual',
         risk_reason: '',
-        dum: ''
+        dum: '',
+        dpp: ''
     });
 
     useEffect(() => {
@@ -160,12 +162,13 @@ export default function PrenatalPage() {
                 },
                 risk_level: formData.risk_level,
                 risk_reason: formData.risk_level === 'Alto' ? formData.risk_reason : null,
-                dum: formData.dum
+                dum: formData.dum,
+                dpp: formData.dpp || null
             }]);
 
             if (error) throw error;
 
-            setFormData({ name: '', age: '', birth_date: '', phone: '', cpf: '', address: '', acs_area: '', risk_level: 'Habitual', risk_reason: '', dum: '' });
+            setFormData({ name: '', age: '', birth_date: '', phone: '', cpf: '', address: '', acs_area: '', risk_level: 'Habitual', risk_reason: '', dum: '', dpp: '' });
             setShowForm(false);
             fetchPatients();
 
@@ -270,7 +273,12 @@ export default function PrenatalPage() {
                         <div className="flex flex-col gap-1">
                             <label className="text-xs font-semibold text-muted ml-1">DUM (Data Última Menstruação) *</label>
                             <input type="date" className="form-control font-medium text-emerald-700" required value={formData.dum} onChange={e => setFormData({ ...formData, dum: e.target.value })} />
-                            <span className="text-[10px] text-muted ml-1 flex items-center gap-1"><Calculator size={10} /> O trimestre será calculado automaticamente em tempo real</span>
+                            <span className="text-[10px] text-muted ml-1 flex items-center gap-1"><Calculator size={10} /> O trimestre será calculado automaticamente</span>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <label className="text-xs font-semibold text-muted ml-1">DPP (Data Provável do Parto)</label>
+                            <input type="date" className="form-control font-medium text-emerald-700" value={formData.dpp} onChange={e => setFormData({ ...formData, dpp: e.target.value })} />
+                            <span className="text-[10px] text-muted ml-1 flex items-center gap-1">Opcional, porém importante</span>
                         </div>
                         <div className="flex flex-col gap-1">
                             <label className="text-xs font-semibold text-muted ml-1">Idade (Opcional)</label>
@@ -410,11 +418,27 @@ export default function PrenatalPage() {
                                         </div>
 
                                         <div className="flex flex-col gap-1 pl-2">
-                                            <div className="flex items-center gap-2">
-                                                <Calculator size={14} className="text-primary/70" />
-                                                <span className="text-primary font-semibold text-sm">
-                                                    {weeks ? `${weeks} semanas (${months} meses)` : 'DUM não informada'}
-                                                </span>
+                                            <div className="flex flex-col gap-0.5 mb-1">
+                                                <div className="flex items-center gap-2">
+                                                    <Calculator size={14} className="text-primary/70" />
+                                                    <span className="text-primary font-semibold text-sm">
+                                                        {weeks ? `${weeks} semanas (${months} meses)` : 'DUM não informada'}
+                                                    </span>
+                                                </div>
+                                                {p.dpp && (
+                                                    <div className="flex items-center gap-2 ml-5">
+                                                        <span className="text-xs text-muted font-medium bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">
+                                                            DPP: {new Date(p.dpp).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                {p.dum && !p.dpp && (
+                                                    <div className="flex items-center gap-2 ml-5">
+                                                        <span className="text-xs text-muted font-medium bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">
+                                                            DUM: {new Date(p.dum).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
+                                                        </span>
+                                                    </div>
+                                                )}
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <Phone size={14} className="text-muted" />
