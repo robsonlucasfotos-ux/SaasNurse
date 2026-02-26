@@ -80,6 +80,7 @@ export default function PrenatalPage() {
     const [selectedPatient, setSelectedPatient] = useState<PregnantWoman | null>(null);
     const [clinicalData, setClinicalData] = useState<any>({});
     const [isSavingClinical, setIsSavingClinical] = useState(false);
+    const [newNote, setNewNote] = useState('');
 
     // Add Patient Form State
     const [showForm, setShowForm] = useState(false);
@@ -183,6 +184,7 @@ export default function PrenatalPage() {
     const openClinicalModal = (patient: PregnantWoman) => {
         setSelectedPatient(patient);
         setClinicalData(patient.clinical_data || {});
+        setNewNote('');
     };
 
     const handleClinicalChange = (key: string, value: any) => {
@@ -193,15 +195,25 @@ export default function PrenatalPage() {
         if (!selectedPatient) return;
         setIsSavingClinical(true);
         try {
+            let updatedClinicalData = { ...clinicalData };
+
+            if (newNote.trim() !== '') {
+                const followUps = updatedClinicalData.followUps || [];
+                updatedClinicalData.followUps = [
+                    { date: new Date().toISOString(), text: newNote },
+                    ...followUps
+                ];
+            }
+
             const { error } = await supabase
                 .from('pregnant_women')
-                .update({ clinical_data: clinicalData })
+                .update({ clinical_data: updatedClinicalData })
                 .eq('id', selectedPatient.id);
 
             if (error) throw error;
 
             // Update local state to reflect changes instantly without full refetch
-            setPatients(patients.map(p => p.id === selectedPatient.id ? { ...p, clinical_data: clinicalData } : p));
+            setPatients(patients.map(p => p.id === selectedPatient.id ? { ...p, clinical_data: updatedClinicalData } : p));
             setSelectedPatient(null);
             alert("Acompanhamento salvo com sucesso!");
         } catch (error) {
@@ -686,10 +698,30 @@ export default function PrenatalPage() {
                                 </div>
                             </div>
 
-                            {/* Observações Gerais */}
+                            {/* Evoluções e Notas (Bloco de Notas) */}
                             <div className="md:col-span-3 card p-4 border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/20">
-                                <h4 className="font-semibold border-b dark:border-gray-700 pb-2 mb-3">Observações Adicionais</h4>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                <h4 className="font-semibold border-b dark:border-gray-700 pb-2 mb-3">Histórico de Acompanhamento (Bloco de Notas)</h4>
+
+                                <div className="mb-4 max-h-60 overflow-y-auto pr-2 flex flex-col gap-3">
+                                    {(!clinicalData?.followUps || clinicalData.followUps.length === 0) ? (
+                                        <p className="text-sm text-gray-500 italic text-center py-4 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+                                            Nenhuma evolução registrada ainda. O histórico de acompanhamento aparecerá aqui.
+                                        </p>
+                                    ) : (
+                                        clinicalData.followUps.map((note: any, index: number) => (
+                                            <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <span className="text-xs font-semibold text-primary">
+                                                        {new Date(note.date).toLocaleDateString('pt-BR')} às {new Date(note.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
+                                                </div>
+                                                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{note.text}</p>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 pt-3 border-t dark:border-gray-700">
                                     <label className="flex items-center gap-2 text-sm cursor-pointer bg-white dark:bg-gray-800 p-2 border dark:border-gray-700 rounded shadow-sm">
                                         <input type="checkbox" className="accent-red-500" checked={clinicalData?.obs_hipertensao || false} onChange={e => handleClinicalChange('obs_hipertensao', e.target.checked)} />
                                         <span className="font-medium text-red-600 dark:text-red-400">Hipertensão</span>
@@ -707,15 +739,17 @@ export default function PrenatalPage() {
                                         <span className="font-medium text-purple-600 dark:text-purple-400">Corrimentos</span>
                                     </label>
                                 </div>
+
                                 <div className="flex flex-col gap-1">
-                                    <label className="text-xs font-semibold text-muted ml-1">Notas Clínicas</label>
+                                    <label className="text-xs font-semibold text-muted ml-1">Nova Anotação (Evolução de Hoje)</label>
                                     <textarea
                                         className="form-control"
-                                        placeholder="Adicione outras observações, evoluções ou detalhes adicionais sobre o acompanhamento..."
+                                        placeholder="Digite as observações da consulta de hoje..."
                                         rows={3}
-                                        value={clinicalData?.notes || ''}
-                                        onChange={e => handleClinicalChange('notes', e.target.value)}
+                                        value={newNote}
+                                        onChange={e => setNewNote(e.target.value)}
                                     />
+                                    <span className="text-[10px] text-muted ml-1 mt-1 font-medium">✨ Ao salvar, esta anotação será permanentemente gravada no histórico usando a data e hora atual.</span>
                                 </div>
                             </div>
                         </div>
