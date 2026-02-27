@@ -90,15 +90,6 @@ export default function PrenatalPage() {
     const [newNote, setNewNote] = useState('');
     const [newCarePlan, setNewCarePlan] = useState('');
 
-    // Scroll lock for modals
-    useEffect(() => {
-        if (editingPatient || selectedPatient) {
-            document.body.classList.add('no-scroll');
-        } else {
-            document.body.classList.remove('no-scroll');
-        }
-    }, [editingPatient, selectedPatient]);
-
     // Add Patient Form State
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({

@@ -15,11 +15,6 @@ export default function PrenatalClinicalPanel({
     onClose,
     onConcludePregnancy,
 }: any) {
-    useEffect(() => {
-        document.body.classList.add('no-scroll');
-        return () => document.body.classList.remove('no-scroll');
-    }, []);
-
     if (!patient) return null;
 
     const followUps: any[] = clinicalData?.followUps || [];
