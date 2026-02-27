@@ -250,10 +250,11 @@ export default function PrenatalPage() {
 
             if (error) throw error;
 
-            // Update local state to reflect changes instantly without full refetch
+            // Atualiza local + limpa campos (fica aberto — estilo Google Keep)
             setPatients(patients.map(p => p.id === selectedPatient.id ? { ...p, clinical_data: updatedClinicalData } : p));
-            setSelectedPatient(null);
-            alert("Acompanhamento salvo com sucesso!");
+            setClinicalData(updatedClinicalData);
+            setNewNote('');
+            setNewCarePlan('');
         } catch (error) {
             console.error("Erro ao salvar acompanhamento:", error);
             alert("Não foi possível salvar o acompanhamento.");
@@ -617,6 +618,7 @@ export default function PrenatalPage() {
                     saveClinicalData={saveClinicalData}
                     isSavingClinical={isSavingClinical}
                     onClose={() => setSelectedPatient(null)}
+                    onConcludePregnancy={handleConcludePregnancy}
                 />
             )}
         </div>

@@ -178,9 +178,11 @@ export default function ChronicPage() {
 
             if (error) throw error;
 
+            // Fica aberto — estilo Google Keep: atualiza lista e limpa campos
             setPatients(patients.map(p => p.id === selectedPatient.id ? { ...p, clinical_data: updatedClinicalData } : p));
-            setSelectedPatient(null);
-            alert("Acompanhamento salvo com sucesso!");
+            setClinicalData(updatedClinicalData);
+            setNewNote('');
+            setNewCarePlan('');
         } catch (error) {
             console.error("Erro ao salvar acompanhamento:", error);
             alert("Não foi possível salvar o acompanhamento.");
@@ -532,32 +534,37 @@ export default function ChronicPage() {
                         </div>
 
                         <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
-                            {/* Histórico */}
+                            {/* Histórico estilo Google Keep */}
                             <div className="card p-4 border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/20">
                                 <h4 className="font-semibold border-b dark:border-gray-700 pb-2 mb-3 flex items-center gap-2">
-                                    <Activity size={16} className="text-primary" /> Histórico de Consultas
+                                    <Activity size={16} className="text-primary" /> Histórico ({clinicalData?.followUps?.length || 0} nota{(clinicalData?.followUps?.length || 0) !== 1 ? 's' : ''})
                                 </h4>
-                                <div className="max-h-52 overflow-y-auto flex flex-col gap-3 pr-1">
-                                    {(!clinicalData?.followUps || clinicalData.followUps.length === 0) ? (
-                                        <p className="text-sm text-gray-500 italic text-center py-4 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">Nenhuma evolução registrada ainda.</p>
-                                    ) : (
-                                        clinicalData.followUps.map((note: any, index: number) => (
-                                            <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                                                <span className="text-xs font-semibold text-primary flex items-center gap-1 mb-2">
-                                                    <Calendar size={12} />
-                                                    {new Date(note.date).toLocaleDateString('pt-BR')} às {new Date(note.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                                                </span>
+                                {(!clinicalData?.followUps || clinicalData.followUps.length === 0) ? (
+                                    <p className="text-sm text-gray-500 italic text-center py-4 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+                                        Nenhuma evolução registrada ainda. Salve a primeira nota abaixo ↓
+                                    </p>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-1">
+                                        {clinicalData.followUps.map((note: any, index: number) => (
+                                            <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                                                <div className="flex justify-between items-center mb-2 pb-1 border-b dark:border-gray-700 border-dashed">
+                                                    <span className="text-xs font-semibold text-primary flex items-center gap-1">
+                                                        <Calendar size={12} />
+                                                        {new Date(note.date).toLocaleDateString('pt-BR')} {new Date(note.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
+                                                    {index === 0 && <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-bold">RECENTE</span>}
+                                                </div>
                                                 {note.text && <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{note.text}</p>}
                                                 {note.carePlan && (
                                                     <div className="bg-blue-50 dark:bg-blue-900/10 p-2 rounded border border-blue-100 dark:border-blue-900/30 mt-2">
-                                                        <strong className="text-xs text-blue-700 dark:text-blue-400 block mb-0.5 flex items-center gap-1"><HeartPulse size={12} /> Plano / Autocuidado:</strong>
+                                                        <strong className="text-xs text-blue-700 dark:text-blue-400 block mb-0.5">Plano / Autocuidado:</strong>
                                                         <p className="text-sm text-blue-800 dark:text-blue-300 whitespace-pre-wrap">{note.carePlan}</p>
                                                     </div>
                                                 )}
                                             </div>
-                                        ))
-                                    )}
-                                </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Nova Evolução */}
@@ -575,15 +582,17 @@ export default function ChronicPage() {
                                         <textarea className={`${inputCls} border-blue-200 focus:border-blue-400 bg-blue-50/30`} placeholder="Metas, orientações, ajustes, encaminhamentos..." rows={4} value={newCarePlan} onChange={e => setNewCarePlan(e.target.value)} />
                                     </div>
                                 </div>
+                                <div className="mt-3 flex justify-end">
+                                    <button onClick={saveClinicalData} disabled={isSavingClinical} className="btn btn-primary flex items-center gap-2">
+                                        {isSavingClinical ? <Loader2 size={16} className="animate-spin" /> : <><Plus size={16} /> Salvar Nota</>}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
                         <div className="p-4 border-t dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 flex justify-end gap-3 items-center">
-                            <span className="text-[10px] text-muted flex-1">✨ A nota será gravada na linha do tempo do paciente.</span>
-                            <button onClick={() => setSelectedPatient(null)} className="btn btn-outline">Cancelar</button>
-                            <button onClick={saveClinicalData} disabled={isSavingClinical} className="btn btn-primary flex items-center gap-2">
-                                {isSavingClinical ? <Loader2 size={16} className="animate-spin" /> : 'Salvar Evolução'}
-                            </button>
+                            <span className="text-[10px] text-muted flex-1">✨ Cada nota é salva na linha do tempo do paciente.</span>
+                            <button onClick={() => setSelectedPatient(null)} className="btn btn-outline">Fechar</button>
                         </div>
                     </div>
                 </div>
