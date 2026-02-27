@@ -521,7 +521,7 @@ export default function PrenatalPage() {
                                                 onClick={() => selectedPatient?.id === p.id ? setSelectedPatient(null) : openClinicalModal(p)}
                                                 className={`flex-1 btn flex items-center justify-center gap-2 text-sm py-2 border-none text-white shadow-sm transition-all ${selectedPatient?.id === p.id ? 'bg-gray-400 hover:bg-gray-500' : 'bg-purple-600 hover:bg-purple-700 btn-primary'}`}
                                             >
-                                                {selectedPatient?.id === p.id ? 'Fechar' : <><CheckCircle size={16} /> Acompanhar</>}
+                                                <CheckCircle size={16} /> Acompanhar
                                             </button>
                                             <button
                                                 onClick={() => {
@@ -536,24 +536,26 @@ export default function PrenatalPage() {
                                                 <Baby size={18} />
                                             </button>
                                         </div>
-                                        {selectedPatient?.id === p.id && (
-                                            <PrenatalClinicalPanel
-                                                patient={p}
-                                                clinicalData={clinicalData}
-                                                handleClinicalChange={handleClinicalChange}
-                                                newNote={newNote}
-                                                setNewNote={setNewNote}
-                                                newCarePlan={newCarePlan}
-                                                setNewCarePlan={setNewCarePlan}
-                                                saveClinicalData={saveClinicalData}
-                                                isSavingClinical={isSavingClinical}
-                                                onClose={() => setSelectedPatient(null)}
-                                            />
-                                        )}
                                     </div>
                                 );
                             })}
                         </div>
+                    )}
+
+                    {/* Modal de Acompanhamento Renderizado Aqui */}
+                    {selectedPatient && (
+                        <PrenatalClinicalPanel
+                            patient={selectedPatient}
+                            clinicalData={clinicalData}
+                            handleClinicalChange={handleClinicalChange}
+                            newNote={newNote}
+                            setNewNote={setNewNote}
+                            newCarePlan={newCarePlan}
+                            setNewCarePlan={setNewCarePlan}
+                            saveClinicalData={saveClinicalData}
+                            isSavingClinical={isSavingClinical}
+                            onClose={() => setSelectedPatient(null)}
+                        />
                     )}
                 </div>
             )}

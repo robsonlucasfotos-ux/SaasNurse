@@ -15,8 +15,8 @@ export default function PrenatalClinicalPanel({
     if (!patient) return null;
 
     return (
-        <div className="mt-4 border-t border-pink-200 dark:border-pink-900/30 pt-4 w-full animate-in fade-in slide-in-from-top-2 col-span-full z-10 relative">
-            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md w-full flex flex-col border border-pink-200 dark:border-pink-900/30 overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col border border-pink-200 dark:border-pink-900/50 overflow-hidden animate-in zoom-in-95 duration-200">
                 <div className="p-4 border-b border-pink-100 dark:border-gray-800 flex justify-between items-start bg-pink-50 dark:bg-pink-900/10">
                     <div>
                         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
@@ -38,7 +38,7 @@ export default function PrenatalClinicalPanel({
                     </button>
                 </div>
 
-                <div className="p-6 flex-1">
+                <div className="p-6 flex-1 overflow-y-auto w-full">
                     <div className="grid grid-cols-1 gap-6">
                         {/* Seção de Checklists: Exibição Compacta dos 3 Trimestres */}
                         <div>
