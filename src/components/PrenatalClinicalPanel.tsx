@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import {
     AlertTriangle, CheckCircle, HeartPulse, Plus, Loader2, FileText,
     Activity, Baby, BookOpen, Calendar, Save, MessageCircle,
-    Stethoscope, ShieldCheck, ChevronDown, ChevronUp, Info
+    Stethoscope, ShieldCheck, ChevronDown, ChevronUp, Info, Pencil
 } from 'lucide-react';
 import ModalPortal from './ModalPortal';
 
@@ -71,10 +71,10 @@ export default function PrenatalClinicalPanel({
                                     {patient.name}
                                 </h2>
                                 <span className={`px-3 py-1 text-xs font-black uppercase tracking-widest rounded-full border ${patient.risk_level === 'Alto'
-                                        ? 'bg-red-50 text-red-600 border-red-200'
-                                        : patient.risk_level === 'Moderado'
-                                            ? 'bg-orange-50 text-orange-600 border-orange-200'
-                                            : 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                                    ? 'bg-red-50 text-red-600 border-red-200'
+                                    : patient.risk_level === 'Moderado'
+                                        ? 'bg-orange-50 text-orange-600 border-orange-200'
+                                        : 'bg-emerald-50 text-emerald-600 border-emerald-200'
                                     }`}>
                                     RISCO {patient.risk_level || 'HABITUAL'}
                                 </span>
@@ -162,8 +162,8 @@ export default function PrenatalClinicalPanel({
                     <button
                         onClick={() => setActiveSection('evolution')}
                         className={`px-6 py-4 text-sm font-black uppercase tracking-widest border-b-4 transition-all ${activeSection === 'evolution'
-                                ? 'border-blue-600 text-blue-600 bg-blue-50/30'
-                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                            ? 'border-blue-600 text-blue-600 bg-blue-50/30'
+                            : 'border-transparent text-gray-400 hover:text-gray-600'
                             }`}
                     >
                         <div className="flex items-center gap-2">
@@ -174,8 +174,8 @@ export default function PrenatalClinicalPanel({
                     <button
                         onClick={() => setActiveSection('protocols')}
                         className={`px-6 py-4 text-sm font-black uppercase tracking-widest border-b-4 transition-all ${activeSection === 'protocols'
-                                ? 'border-pink-600 text-pink-600 bg-pink-50/30'
-                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                            ? 'border-pink-600 text-pink-600 bg-pink-50/30'
+                            : 'border-transparent text-gray-400 hover:text-gray-600'
                             }`}
                     >
                         <div className="flex items-center gap-2">
@@ -377,8 +377,8 @@ export default function PrenatalClinicalPanel({
                                                 <div
                                                     key={t.id}
                                                     className={`p-1 rounded-[2.5rem] transition-all duration-300 ${currentTrimester === t.id
-                                                            ? 'bg-gradient-to-tr from-pink-100 to-purple-100 shadow-lg border border-pink-200'
-                                                            : 'bg-white border border-gray-100'
+                                                        ? 'bg-gradient-to-tr from-pink-100 to-purple-100 shadow-lg border border-pink-200'
+                                                        : 'bg-white border border-gray-100'
                                                         }`}
                                                 >
                                                     <button

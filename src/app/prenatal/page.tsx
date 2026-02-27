@@ -441,8 +441,8 @@ export default function PrenatalPage() {
                                     key={tab}
                                     onClick={() => setPatientFilterTab(tab)}
                                     className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${patientFilterTab === tab
-                                            ? 'bg-primary text-white shadow-lg shadow-blue-200'
-                                            : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
+                                        ? 'bg-primary text-white shadow-lg shadow-blue-200'
+                                        : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
                                         }`}
                                 >
                                     {tab === 'Todas' ? 'Todas' : tab === 'Cofen' ? 'Prescrições 801/26' : `${tab}º Trimestre`}
@@ -573,7 +573,7 @@ export default function PrenatalPage() {
                 setNewNote={setNewNote}
                 newCarePlan={newCarePlan}
                 setNewCarePlan={setNewCarePlan}
-                saveClinicalData={handleSaveClinical}
+                saveClinicalData={saveClinicalData}
                 isSavingClinical={isSavingClinical}
                 onClose={() => setSelectedPatient(null)}
                 onConcludePregnancy={handleConcludePregnancy}
