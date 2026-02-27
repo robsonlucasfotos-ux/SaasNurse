@@ -85,15 +85,24 @@ export default function LoginPage() {
                     <button
                         type="button"
                         onClick={async () => {
-                            const { error } = await supabase.auth.signInWithPassword({
-                                email: 'nurse@aps.com',
-                                password: 'nursepassword'
-                            });
-                            if (!error) router.push('/');
+                            try {
+                                const { error } = await supabase.auth.signInWithPassword({
+                                    email: 'nurse@aps.com',
+                                    password: 'nursepassword'
+                                });
+                                if (error) {
+                                    alert('Erro no login: ' + error.message);
+                                } else {
+                                    window.location.href = '/';
+                                }
+                            } catch (e) {
+                                alert('Erro inesperado: ' + JSON.stringify(e));
+                            }
                         }}
-                        className="w-full mt-4 text-xs text-gray-400 hover:text-gray-600 underline"
+                        className="w-full mt-4 text-xs text-gray-400 hover:text-gray-600 underline text-center"
+                        style={{ cursor: 'pointer', zIndex: 50, position: 'relative' }}
                     >
-                        Entrar como Desenvolvedor
+                        Entrar como Desenvolvedor (Bypass)
                     </button>
                 </form>
             </div>
