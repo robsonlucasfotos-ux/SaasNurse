@@ -230,6 +230,7 @@ export default function PrenatalPage() {
     };
 
     const openClinicalModal = (patient: PregnantWoman) => {
+        console.log('Opening Clinical Modal for:', patient.name);
         setEditingPatient(null);
         setClinicalData(patient.clinical_data || {});
         setNewNote('');
@@ -325,25 +326,25 @@ export default function PrenatalPage() {
 
             {/* Dashboard */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="card bg-pink-50 dark:bg-pink-900/10 border-pink-100 flex flex-col justify-between p-4">
-                    <span className="text-pink-600 font-medium text-sm">1º Trimestre</span>
-                    <span className="text-3xl font-bold text-pink-700">{isLoading ? '-' : stats.trim1}</span>
-                    <span className="text-xs text-pink-500 mt-1">Até 12 semanas</span>
+                <div className="card bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/10 dark:to-pink-900/20 border-pink-200 flex flex-col justify-between p-5 shadow-sm">
+                    <span className="text-pink-600 font-black text-[10px] uppercase tracking-widest">1º Trimestre</span>
+                    <span className="text-4xl font-black text-pink-700 my-2">{isLoading ? '-' : stats.trim1}</span>
+                    <span className="text-[10px] font-bold text-pink-400 uppercase">Até 12 semanas</span>
                 </div>
-                <div className="card bg-purple-50 dark:bg-purple-900/10 border-purple-100 flex flex-col justify-between p-4">
-                    <span className="text-purple-600 font-medium text-sm">2º Trimestre</span>
-                    <span className="text-3xl font-bold text-purple-700">{isLoading ? '-' : stats.trim2}</span>
-                    <span className="text-xs text-purple-500 mt-1">13 a 27 semanas</span>
+                <div className="card bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/10 dark:to-purple-900/20 border-purple-200 flex flex-col justify-between p-5 shadow-sm">
+                    <span className="text-purple-600 font-black text-[10px] uppercase tracking-widest">2º Trimestre</span>
+                    <span className="text-4xl font-black text-purple-700 my-2">{isLoading ? '-' : stats.trim2}</span>
+                    <span className="text-[10px] font-bold text-purple-400 uppercase">13 a 27 semanas</span>
                 </div>
-                <div className="card bg-blue-50 dark:bg-blue-900/10 border-blue-100 flex flex-col justify-between p-4">
-                    <span className="text-blue-600 font-medium text-sm">3º Trimestre</span>
-                    <span className="text-3xl font-bold text-blue-700">{isLoading ? '-' : stats.trim3}</span>
-                    <span className="text-xs text-blue-500 mt-1">A partir de 28 sem.</span>
+                <div className="card bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/10 dark:to-blue-900/20 border-blue-200 flex flex-col justify-between p-5 shadow-sm">
+                    <span className="text-blue-600 font-black text-[10px] uppercase tracking-widest">3º Trimestre</span>
+                    <span className="text-4xl font-black text-blue-700 my-2">{isLoading ? '-' : stats.total - stats.trim1 - stats.trim2}</span>
+                    <span className="text-[10px] font-bold text-blue-400 uppercase">Parto Próximo</span>
                 </div>
-                <div className="card bg-green-50 dark:bg-green-900/10 border-green-100 flex flex-col justify-between p-4">
-                    <span className="text-green-600 font-medium text-sm">Total Na Unidade</span>
-                    <span className="text-3xl font-bold text-green-700">{isLoading ? '-' : stats.total}</span>
-                    <span className="text-xs text-green-500 mt-1">Gestantes ativas</span>
+                <div className="card bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/10 dark:to-emerald-900/20 border-emerald-200 flex flex-col justify-between p-5 shadow-sm">
+                    <span className="text-emerald-600 font-black text-[10px] uppercase tracking-widest">Total Ativo</span>
+                    <span className="text-4xl font-black text-emerald-700 my-2">{isLoading ? '-' : stats.total}</span>
+                    <span className="text-[10px] font-bold text-emerald-400 uppercase">Gestantes</span>
                 </div>
             </div>
 
@@ -423,19 +424,28 @@ export default function PrenatalPage() {
                     <p className="text-sm text-gray-400 mt-1">Clique em "Nova Gestante" para começar.</p>
                 </div>
             ) : (
-                <div className="card w-full mt-2 border-primary">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                        <h3 className="text-primary font-semibold flex items-center gap-2">
-                            <Users size={18} /> Gestantes Acompanhadas ({patients.length})
-                        </h3>
+                <div className="card w-full mt-2 border-primary overflow-hidden">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                        <div>
+                            <h3 className="text-gray-900 font-black text-xl flex items-center gap-2">
+                                <Users size={24} className="text-primary" />
+                                Monitoramento de Gestantes
+                            </h3>
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">
+                                {patients.length} pacientes em acompanhamento ativo
+                            </p>
+                        </div>
                         <div className="flex flex-wrap gap-2">
                             {(['Todas', 1, 2, 3, 'Cofen'] as const).map(tab => (
                                 <button
                                     key={tab}
                                     onClick={() => setPatientFilterTab(tab)}
-                                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${patientFilterTab === tab ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300'}`}
+                                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${patientFilterTab === tab
+                                            ? 'bg-primary text-white shadow-lg shadow-blue-200'
+                                            : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
+                                        }`}
                                 >
-                                    {tab === 'Todas' ? 'Todas' : tab === 'Cofen' ? 'Prescrições Enf. (801/26)' : `${tab}º Trimestre`}
+                                    {tab === 'Todas' ? 'Todas' : tab === 'Cofen' ? 'Prescrições 801/26' : `${tab}º Trimestre`}
                                 </button>
                             ))}
                         </div>
@@ -444,50 +454,38 @@ export default function PrenatalPage() {
                     {patientFilterTab === 'Cofen' ? (
                         <div className="animate-in fade-in slide-in-from-bottom-2">
                             <div className="relative mb-6">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                                 <input
                                     type="text"
-                                    placeholder="Buscar por medicação, sintoma ou necessidade..."
-                                    className="form-control pl-10 h-12 text-base shadow-sm"
+                                    placeholder="Buscar por medicação ou indicação..."
+                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all font-bold text-gray-800"
                                     value={medQuery}
                                     onChange={(e) => setMedQuery(e.target.value)}
                                 />
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {cofenMedications.filter(m =>
                                     m.name.toLowerCase().includes(medQuery.toLowerCase()) ||
                                     m.category.toLowerCase().includes(medQuery.toLowerCase()) ||
                                     m.indication.toLowerCase().includes(medQuery.toLowerCase())
                                 ).map((m, idx) => (
-                                    <div key={idx} className="p-4 border rounded-xl bg-green-50/30 dark:bg-green-900/10 border-green-100 dark:border-green-900/30">
-                                        <div className="flex justify-between items-start mb-2">
-                                            <span className="text-[10px] font-bold uppercase tracking-wider bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-100 px-2 py-0.5 rounded">
+                                    <div key={idx} className="p-6 border-2 border-emerald-50 rounded-3xl bg-emerald-50/10 hover:border-emerald-200 transition-all group">
+                                        <div className="flex justify-between items-start mb-3">
+                                            <span className="text-[9px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-800 px-2 py-1 rounded-lg">
                                                 {m.category}
                                             </span>
                                         </div>
-                                        <h4 className="font-bold text-gray-800 dark:text-gray-100">{m.name}</h4>
-                                        <p className="text-sm text-green-700 dark:text-green-400 font-semibold mt-1">{m.dosage}</p>
-                                        <p className="text-xs text-muted mt-2 leading-relaxed"><strong>Indicação:</strong> {m.indication}</p>
+                                        <h4 className="font-black text-gray-900 group-hover:text-emerald-700 transition-colors">{m.name}</h4>
+                                        <p className="text-[10px] font-black text-emerald-600 mt-1 uppercase tracking-tighter">{m.dosage}</p>
+                                        <div className="mt-4 pt-4 border-t border-emerald-50">
+                                            <p className="text-xs text-gray-500 font-bold leading-relaxed">Indicação: <span className="text-gray-900">{m.indication}</span></p>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
-
-                            <div className="mt-8 pt-6 border-t dark:border-gray-800">
-                                <h4 className="font-bold text-primary flex items-center gap-2 mb-4">
-                                    <CheckCircle size={18} /> Exames que o Enfermeiro pode solicitar (2026)
-                                </h4>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {authorizedExams.map((ex, idx) => (
-                                        <div key={idx} className="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800/40">
-                                            <strong className="text-xs block mb-1 text-gray-500">{ex.type}</strong>
-                                            <p className="text-sm">{ex.items}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                             {patients.filter(p => {
                                 if (patientFilterTab === 'Todas') return true;
                                 return calculateTrimester(p.dum) === patientFilterTab;
@@ -496,72 +494,63 @@ export default function PrenatalPage() {
                                 const diffTime = dumDate ? Math.abs(Date.now() - dumDate.getTime()) : 0;
                                 const weeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
                                 const trimester = calculateTrimester(p.dum);
+                                const riskColor = p.risk_level === 'Alto' ? 'red' : p.risk_level === 'Moderado' ? 'orange' : 'emerald';
 
                                 return (
-                                    <div key={p.id} className="border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-col gap-3 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
-                                        <div className={`absolute top-0 left-0 w-1 h-full ${p.risk_level === 'Alto' ? 'bg-red-500' : p.risk_level === 'Moderado' ? 'bg-orange-500' : 'bg-green-500'}`}></div>
-                                        <div className="flex justify-between items-start pl-2">
-                                            <div className="flex-1 pr-2">
-                                                <h4 className="font-bold text-gray-800 dark:text-gray-100 text-lg leading-tight">{p.name}</h4>
-                                                <span className="text-sm text-muted">{p.age ? `${p.age} anos` : 'Idade não informada'}</span>
+                                    <div key={p.id} className="group border-2 border-gray-50 rounded-[2.5rem] p-6 flex flex-col bg-white hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 relative">
+                                        <div className={`absolute top-6 left-0 w-1.5 h-12 rounded-r-full bg-${riskColor}-500 shadow-[2px_0_10px_rgba(0,0,0,0.1)]`}></div>
+
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="font-black text-gray-900 text-xl leading-tight truncate group-hover:text-primary transition-colors">{p.name}</h4>
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{p.age ? `${p.age} Anos` : 'Idade N/I'}</span>
+                                                    <span className="w-1 h-1 rounded-full bg-gray-200"></span>
+                                                    <span className={`text-[9px] font-black uppercase tracking-widest text-${riskColor}-600`}>Risco {p.risk_level}</span>
+                                                </div>
                                             </div>
-                                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${p.risk_level === 'Alto' ? 'bg-red-100 text-red-700' : p.risk_level === 'Moderado' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
-                                                {p.risk_level}
-                                            </span>
                                         </div>
 
-                                        <div className="flex flex-col gap-1 pl-2 text-sm text-muted">
-                                            <span>DUM: {p.dum ? new Date(p.dum).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/I'}</span>
-                                            <span className="font-semibold text-primary">
-                                                {weeks}ª semana — {trimester ? `${trimester}º Trimestre` : 'Sem. N/I'}
-                                            </span>
-                                            {p.dpp && (
-                                                <span className="text-pink-600 font-medium">
-                                                    DPP: {new Date(p.dpp).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
-                                                </span>
-                                            )}
-                                            {p.phone && (
-                                                <a
-                                                    href={`https://wa.me/55${p.phone.replace(/\D/g, '')}?text=Olá ${p.name.split(' ')[0]}, aqui é a enfermagem da UBS. Tudo bem?`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-center gap-1 text-[#25D366] hover:underline"
-                                                >
-                                                    <MessageCircle size={14} /> {p.phone}
-                                                </a>
-                                            )}
+                                        <div className="p-4 bg-gray-50 rounded-3xl mb-4 space-y-2">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">Status Gestacional</span>
+                                                <span className="text-xs font-black text-primary uppercase italic">{weeks}ª Semana</span>
+                                            </div>
+                                            <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+                                                <div className="h-full bg-primary" style={{ width: `${Math.min((weeks / 40) * 100, 100)}%` }}></div>
+                                            </div>
+                                            <div className="flex justify-between items-center pt-1">
+                                                <span className="text-[10px] font-bold text-gray-500">DUM: {p.dum ? new Date(p.dum).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/I'}</span>
+                                                <span className="text-[10px] font-bold text-pink-500 uppercase">DPP: {p.dpp ? new Date(p.dpp).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/I'}</span>
+                                            </div>
                                         </div>
 
-                                        {p.risk_level === 'Alto' && p.risk_reason && (
-                                            <div className="bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-400 text-xs p-2 rounded-lg border border-red-100 ml-2">
-                                                <strong className="opacity-80 block mb-0.5">Motivo do Risco:</strong>
-                                                {p.risk_reason}
-                                            </div>
+                                        {p.phone && (
+                                            <a
+                                                href={`https://wa.me/55${p.phone.replace(/\D/g, '')}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-2 text-emerald-600 font-bold text-xs mb-4 hover:bg-emerald-50 p-2 rounded-xl transition-colors w-fit"
+                                            >
+                                                <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">
+                                                    <MessageCircle size={14} />
+                                                </div>
+                                                {p.phone}
+                                            </a>
                                         )}
 
-                                        <div className="mt-auto pt-3 border-t dark:border-gray-800 flex gap-2 pl-2">
+                                        <div className="mt-auto flex gap-2">
                                             <button
                                                 onClick={() => openClinicalModal(p)}
-                                                className="flex-1 btn flex items-center justify-center gap-2 text-sm py-2 border-none text-white shadow-sm bg-purple-600 hover:bg-purple-700"
+                                                className="flex-1 py-4 bg-gray-900 hover:bg-black text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-gray-200 active:scale-95 transition-all flex items-center justify-center gap-2"
                                             >
-                                                <CheckCircle size={16} /> Acompanhar
+                                                <Plus size={16} /> Acompanhar
                                             </button>
                                             <button
                                                 onClick={() => openEditModal(p)}
-                                                className="p-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition-colors"
-                                                title="Editar dados"
+                                                className="p-4 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-2xl transition-all active:scale-90"
                                             >
-                                                <Pencil size={16} />
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    const outcome = window.prompt('Digite o desfecho (ex: Parto Normal, Cesárea ou Aborto):', 'Parto Normal');
-                                                    if (outcome) handleConcludePregnancy(p.id, outcome, p.clinical_data);
-                                                }}
-                                                className="p-2 border border-pink-200 text-pink-600 hover:bg-pink-50 rounded-lg transition-colors flex items-center justify-center bg-white dark:bg-gray-800"
-                                                title="Finalizar Gestação"
-                                            >
-                                                <Baby size={18} />
+                                                <Pencil size={18} />
                                             </button>
                                         </div>
                                     </div>
@@ -572,79 +561,27 @@ export default function PrenatalPage() {
                 </div>
             )}
 
-            {/* Protocolos por Trimestre */}
-            <div className="mt-4 pt-4 border-t">
-                <h3 className="mb-4">Protocolos por Trimestre</h3>
-                <div className="flex flex-wrap gap-2 mb-4">
-                    {trimestersData.map(t => (
-                        <button
-                            key={t.id}
-                            className={`btn ${activeTab === t.id ? 'btn-primary' : 'btn-outline'}`}
-                            onClick={() => setActiveTab(t.id)}
-                        >
-                            {t.title}
-                        </button>
-                    ))}
-                </div>
-                <div className="card w-full">
-                    {trimestersData.filter(t => t.id === activeTab).map(t => (
-                        <div key={t.id} className="animate-in fade-in">
-                            <h3 className="flex items-center gap-2 mb-6">
-                                <HeartPulse color="var(--primary)" />
-                                Condutas — {t.title}
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 className="flex items-center gap-2 mb-4 text-warning">
-                                        <AlertTriangle size={18} /> Queixas Comuns e Manejo
-                                    </h4>
-                                    <div className="flex flex-col gap-4">
-                                        {t.symptoms.map((s, idx) => (
-                                            <div key={idx} className="p-4 border rounded" style={{ borderColor: 'var(--border)' }}>
-                                                <strong>{s.name}</strong>
-                                                <p className="text-muted mt-2" style={{ fontSize: '0.9rem' }}>{s.conduct}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 className="flex items-center gap-2 mb-4" style={{ color: 'var(--secondary)' }}>
-                                        <CheckCircle size={18} /> Prescrições de Rotina
-                                    </h4>
-                                    <div className="flex flex-col gap-4">
-                                        {t.prescriptions.map((p, idx) => (
-                                            <div key={idx} className="p-4 border rounded" style={{ borderColor: 'var(--border)', backgroundColor: 'rgba(16, 185, 129, 0.05)' }}>
-                                                <strong>{p.med}</strong>
-                                                <p className="text-muted mt-2" style={{ fontSize: '0.9rem' }}>{p.posology}</p>
-                                                {p.pcdt && <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded mt-2 inline-block">Conforme Caderno AB N° 32</span>}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            {/* Clinical Follow-up Modal */}
+            <PrenatalClinicalPanel
+                patient={selectedPatient}
+                clinicalData={clinicalData}
+                handleClinicalChange={(key: string, val: any) => {
+                    const updated = { ...clinicalData, [key]: val };
+                    setClinicalData(updated);
+                }}
+                newNote={newNote}
+                setNewNote={setNewNote}
+                newCarePlan={newCarePlan}
+                setNewCarePlan={setNewCarePlan}
+                saveClinicalData={handleSaveClinical}
+                isSavingClinical={isSavingClinical}
+                onClose={() => setSelectedPatient(null)}
+                onConcludePregnancy={handleConcludePregnancy}
+                trimestersData={trimestersData}
+                cofenMedications={cofenMedications}
+            />
 
-            {/* Modal de Acompanhamento Clínico */}
-            {selectedPatient && (
-                <PrenatalClinicalPanel
-                    patient={selectedPatient}
-                    clinicalData={clinicalData}
-                    handleClinicalChange={handleClinicalChange}
-                    newNote={newNote}
-                    setNewNote={setNewNote}
-                    newCarePlan={newCarePlan}
-                    setNewCarePlan={setNewCarePlan}
-                    saveClinicalData={saveClinicalData}
-                    isSavingClinical={isSavingClinical}
-                    onClose={() => setSelectedPatient(null)}
-                    onConcludePregnancy={handleConcludePregnancy}
-                />
-            )}
-
-            {/* Modal de Edição */}
+            {/* Edit Patient Modal */}
             {editingPatient && (
                 <ModalPortal>
                     <div className="modal-overlay">
