@@ -28,15 +28,27 @@ export default function ElderlyHealthPage() {
         try {
             const { data: userData } = await supabase.auth.getUser();
             if (userData.user) {
-                const { data, error } = await supabase
-                    .from('patients')
-                    .select('*')
-                    .gte('age', 60)
-                    .eq('user_id', userData.user.id)
-                    .order('name');
+                const uid = userData.user.id;
 
-                if (error) throw error;
-                setPatients(data || []);
+                // Fetch from both original tables
+                const [pwRes, cpRes] = await Promise.all([
+                    supabase.from('pregnant_women').select('id, name, age, phone, risk_level, clinical_data').eq('user_id', uid),
+                    supabase.from('chronic_patients').select('id, name, age, phone, risk_level, clinical_data').eq('user_id', uid)
+                ]);
+
+                // Merge, deduplicate by id, and filter age >= 60
+                const allPatients = [
+                    ...(pwRes.data || []),
+                    ...(cpRes.data || [])
+                ];
+                const seen = new Set<string>();
+                const elderly = allPatients.filter(p => {
+                    if (seen.has(p.id) || (p.age ?? 0) < 60) return false;
+                    seen.add(p.id);
+                    return true;
+                }).sort((a, b) => a.name.localeCompare(b.name));
+
+                setPatients(elderly);
             }
         } catch (error) {
             console.error('Error loading elderly patients:', error);

@@ -13,7 +13,7 @@ interface ChronicPatient {
     name: string;
     age: number;
     phone: string;
-    chronic_condition: 'HAS' | 'DM' | 'HAS e DM';
+    condition: 'HAS' | 'DM' | 'HAS e DM';
     risk_level: 'Baixo' | 'Moderado' | 'Alto';
     last_bp_check: string | null;
     last_hba1c: number | null;
@@ -32,7 +32,7 @@ export default function ChronicPage() {
     const [filter, setFilter] = useState<'Todas' | 'HAS' | 'DM' | 'HAS e DM'>('Todas');
 
     const [newPatient, setNewPatient] = useState<Partial<ChronicPatient>>({
-        chronic_condition: 'HAS',
+        condition: 'HAS',
         risk_level: 'Baixo'
     });
 
@@ -55,9 +55,8 @@ export default function ChronicPage() {
             const { data: userData } = await supabase.auth.getUser();
             if (userData.user) {
                 const { data, error } = await supabase
-                    .from('patients')
+                    .from('chronic_patients')
                     .select('*')
-                    .eq('is_chronic', true)
                     .eq('user_id', userData.user.id)
                     .order('name');
 
@@ -79,13 +78,13 @@ export default function ChronicPage() {
             if (!userData.user) return;
 
             const { error } = await supabase
-                .from('patients')
-                .insert([{ ...newPatient, is_chronic: true, user_id: userData.user.id }]);
+                .from('chronic_patients')
+                .insert([{ ...newPatient, user_id: userData.user.id }]);
 
             if (error) throw error;
 
             setIsAdding(false);
-            setNewPatient({ chronic_condition: 'HAS', risk_level: 'Baixo' });
+            setNewPatient({ condition: 'HAS', risk_level: 'Baixo' });
             loadPatients();
         } catch (error) {
             console.error('Error adding patient:', error);
@@ -125,7 +124,7 @@ export default function ChronicPage() {
             }
 
             const { error } = await supabase
-                .from('patients')
+                .from('chronic_patients')
                 .update({ clinical_data: updatedClinicalData })
                 .eq('id', selectedPatient.id);
 
@@ -144,7 +143,7 @@ export default function ChronicPage() {
 
     const filteredPatients = patients.filter(p => {
         const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesFilter = filter === 'Todas' || p.chronic_condition === filter;
+        const matchesFilter = filter === 'Todas' || p.condition === filter;
         return matchesSearch && matchesFilter;
     });
 
@@ -224,7 +223,7 @@ export default function ChronicPage() {
                             type="text" placeholder="WhatsApp (ex: 61999999999)" className="input"
                             onChange={e => setNewPatient({ ...newPatient, phone: e.target.value })}
                         />
-                        <select className="input" onChange={e => setNewPatient({ ...newPatient, chronic_condition: e.target.value as any })}>
+                        <select className="input" onChange={e => setNewPatient({ ...newPatient, condition: e.target.value as any })}>
                             <option value="HAS">Hipertensão (HAS)</option>
                             <option value="DM">Diabetes (DM)</option>
                             <option value="HAS e DM">Ambos (HAS e DM)</option>
@@ -331,8 +330,8 @@ export default function ChronicPage() {
                                             </td>
                                             <td className="p-3 text-sm">
                                                 <div className="flex items-center gap-2">
-                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${p.chronic_condition === 'HAS' ? 'bg-blue-100 text-blue-700' : p.chronic_condition === 'DM' ? 'bg-orange-100 text-orange-700' : 'bg-purple-100 text-purple-700'}`}>
-                                                        {p.chronic_condition}
+                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${p.condition === 'HAS' ? 'bg-blue-100 text-blue-700' : p.condition === 'DM' ? 'bg-orange-100 text-orange-700' : 'bg-purple-100 text-purple-700'}`}>
+                                                        {p.condition}
                                                     </span>
                                                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${p.risk_level === 'Alto' ? 'bg-red-100 text-red-700' : 'bg-gray-100'}`}>
                                                         {p.risk_level}
@@ -345,7 +344,7 @@ export default function ChronicPage() {
                                                         <Activity size={12} className={bpOverdue ? 'text-red-500' : 'text-green-500'} />
                                                         <span>PA: {p.last_bp_check ? new Date(p.last_bp_check).toLocaleDateString('pt-BR') : 'N/A'}</span>
                                                     </div>
-                                                    {p.chronic_condition !== 'HAS' && (
+                                                    {p.condition !== 'HAS' && (
                                                         <div className="flex items-center gap-1 text-[11px]">
                                                             <TrendingDown size={12} className={p.last_hba1c && p.last_hba1c > 7 ? 'text-red-500' : 'text-green-500'} />
                                                             <span>HbA1c: {p.last_hba1c ? `${p.last_hba1c}%` : 'N/A'}</span>

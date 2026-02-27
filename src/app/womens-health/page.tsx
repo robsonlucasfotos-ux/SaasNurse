@@ -29,9 +29,8 @@ export default function WomensHealthPage() {
             const { data: userData } = await supabase.auth.getUser();
             if (userData.user) {
                 const { data, error } = await supabase
-                    .from('patients')
+                    .from('pregnant_women')
                     .select('*')
-                    .eq('gender', 'Feminino')
                     .eq('user_id', userData.user.id)
                     .order('name');
 
