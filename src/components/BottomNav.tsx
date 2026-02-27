@@ -7,7 +7,7 @@ import {
     Home, HeartPulse, Thermometer, Search, Grid3x3,
     X, Baby, ShieldAlert, Stethoscope, Syringe,
     AlertTriangle, Package, BookOpen, FileText, FilePen,
-    Heart, BarChart3
+    Heart, BarChart3, Bandage
 } from 'lucide-react';
 import styles from './BottomNav.module.css';
 
@@ -40,7 +40,7 @@ export default function BottomNav() {
 
     const tabs = [
         { href: '/', label: 'Início', icon: Home },
-        { href: '/wound-care', label: 'Curativos', icon: Thermometer },
+        { href: '/wound-care', label: 'Curativos', icon: Bandage },
         { href: '/ciap-search', label: 'CIAP-2', icon: Search },
     ];
 

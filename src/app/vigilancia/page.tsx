@@ -1,10 +1,10 @@
 'use client';
 
 import { AlertTriangle, ExternalLink, FileText, Clock } from 'lucide-react';
-import { ciap2Database } from '@/data/ciap2';
+import { ciap2Database, CIAP2Code } from '@/data/ciap2';
 
 export default function VigilanciaPage() {
-    const notificacoes = ciap2Database.filter(c => c.isNotificacaoCompulsoria);
+    const notificacoes = (ciap2Database as CIAP2Code[]).filter(c => c.isNotificacaoCompulsoria);
 
     return (
         <div className="flex flex-col h-full gap-6">

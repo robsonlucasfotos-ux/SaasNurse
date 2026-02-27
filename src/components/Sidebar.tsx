@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import {
   Home, Baby, Activity, HeartPulse,
   Syringe, FileText, BookOpen, ShieldAlert,
-  Stethoscope, AlertTriangle, FilePen, Package, Thermometer,
+  Stethoscope, AlertTriangle, FilePen, Package, Bandage,
   BarChart3
 } from 'lucide-react';
 import { useMobileNav } from './MobileNavProvider';
@@ -16,7 +16,7 @@ const navItems = [
   { href: '/prenatal', label: 'Pré-natal', icon: HeartPulse },
   { href: '/child-care', label: 'Puericultura', icon: Baby },
   { href: '/elderly-health', label: 'Saúde do Idoso', icon: ShieldAlert },
-  { href: '/wound-care', label: 'Curativos / Evolução', icon: Thermometer },
+  { href: '/wound-care', label: 'Curativos / Evolução', icon: Bandage },
   { href: '/chronic', label: 'Hipertensão/Diabetes', icon: Stethoscope },
   { href: '/vaccination', label: 'Vacinação', icon: Syringe },
   { href: '/unit-management', label: 'Gestão da Unidade', icon: Package },
@@ -25,7 +25,6 @@ const navItems = [
 ];
 
 const docItems = [
-  { href: '/evolucao', label: 'Evolução SOAP', icon: FilePen },
   { href: '/ciap-search', label: 'Buscador CIAP-2', icon: FileText },
   { href: '/norms', label: 'Normas', icon: BookOpen },
 ];

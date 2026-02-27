@@ -1,5 +1,6 @@
 'use client';
 
+
 import Link from 'next/link';
 import {
   HeartPulse, Baby, ShieldAlert, Stethoscope,
@@ -93,7 +94,6 @@ const clinicCards = [
 ];
 
 const toolCards = [
-  { href: '/evolucao', label: 'Evolução SOAP', icon: FilePen, color: '#0ea5e9' },
   { href: '/ciap-search', label: 'Busca CIAP-2', icon: Search, color: '#22c55e' },
   { href: '/norms', label: 'Normas', icon: BookOpen, color: '#8b5cf6' },
   { href: '/unit-management', label: 'Estoque', icon: Package, color: '#f59e0b' },
@@ -117,6 +117,7 @@ export default function HomePage() {
   const [stats, setStats] = useState({
     pregnant: 0,
     children: 0,
+    chronic: 0,
     inventory: 0,
     isLoading: true,
     pregnantByTrim: [0, 0, 0],
@@ -146,14 +147,16 @@ export default function HomePage() {
         setUserEmail(firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase());
 
         // Fetch parallel data
-        const [resP, resC, resI] = await Promise.all([
+        const [resP, resC, resCh, resI] = await Promise.all([
           supabase.from('pregnant_women').select('*').eq('user_id', userId),
           supabase.from('children').select('*').eq('user_id', userId),
+          supabase.from('chronic_patients').select('*', { count: 'exact', head: true }).eq('user_id', userId),
           supabase.from('inventory_notes').select('*', { count: 'exact', head: true }).eq('user_id', userId)
         ]);
 
         let pData = resP.data || [];
         let cData = resC.data || [];
+        let chCount = resCh.count || 0;
         let i = resI.count || 0;
 
         // Process High Risk
@@ -183,6 +186,7 @@ export default function HomePage() {
         setStats({
           pregnant: pData.length,
           children: cData.length,
+          chronic: chCount,
           inventory: i,
           isLoading: false,
           pregnantByTrim: trim,
@@ -249,7 +253,7 @@ export default function HomePage() {
       {highRiskPatients.length > 0 && (
         <div className="mb-6">
           <h3 className="section-label flex items-center gap-2 mb-3 text-red-600 font-bold">
-            <Bell size={18} className="animate-bounce" /> ALERTAS CRÍTICOS (ALTO RISCO)
+            <Activity size={18} /> RASTREIO DE RISCO
           </h3>
           <div className={styles.highRiskGrid}>
             {highRiskPatients.slice(0, 4).map((p, idx) => (
@@ -275,7 +279,7 @@ export default function HomePage() {
       {/* Prompts Inteligentes */}
       {prompts.length > 0 && (
         <div className="mb-6">
-          <p className="section-label mb-3">Prompts Clínicos (Automação)</p>
+          <p className="section-label mb-3">Rastreio ( WhatsApp )</p>
           {prompts.map((p, idx) => (
             <div key={idx} className={styles.promptCard}>
               <div className="flex flex-col">
@@ -317,9 +321,10 @@ export default function HomePage() {
             <div className="flex items-end gap-2 h-20 w-full justify-around px-4">
               {stats.pregnantByTrim.map((val, idx) => (
                 <div key={idx} className="flex flex-col items-center gap-1 w-full">
+                  <span className="text-[10px] font-bold text-primary">{val}</span>
                   <div
                     className="bg-primary rounded-t w-full transition-all duration-500"
-                    style={{ height: `${(val / (stats.pregnant || 1)) * 100}%`, minHeight: '4px', opacity: 0.7 + idx * 0.1 }}
+                    style={{ height: `${(val / (Math.max(...stats.pregnantByTrim) || 1)) * 100}%`, minHeight: '4px', opacity: 0.7 + idx * 0.1 }}
                   />
                   <span className="text-[9px] font-bold">{idx + 1}º Tri</span>
                 </div>
@@ -373,6 +378,10 @@ export default function HomePage() {
         <div className={styles.summaryCard} style={{ background: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)', borderColor: '#a5b4fc' }}>
           <span className={styles.summaryNum} style={{ color: '#4338ca' }}>{stats.isLoading ? '...' : stats.children}</span>
           <span className={styles.summaryLabel} style={{ color: '#4f46e5' }}>Crianças</span>
+        </div>
+        <div className={styles.summaryCard} style={{ background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', borderColor: '#6ee7b7' }}>
+          <span className={styles.summaryNum} style={{ color: '#047857' }}>{stats.isLoading ? '...' : stats.chronic}</span>
+          <span className={styles.summaryLabel} style={{ color: '#059669' }}>Crônicos</span>
         </div>
         <div className={styles.summaryCard} style={{ background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)', borderColor: '#fcd34d' }}>
           <span className={styles.summaryNum} style={{ color: '#b45309' }}>{stats.isLoading ? '...' : stats.inventory}</span>

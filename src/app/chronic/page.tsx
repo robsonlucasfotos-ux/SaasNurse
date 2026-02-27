@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import {
     Stethoscope, Plus, Search, Loader2, AlertTriangle,
     CheckCircle, MessageCircle, ExternalLink, Calendar,
-    Activity, TrendingDown, Thermometer, Droplets, Phone
+    Activity, TrendingDown, Thermometer, Droplets, Phone, HeartPulse
 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 
@@ -21,6 +21,7 @@ interface ChronicPatient {
     insulin_expiry_date: string | null;
     medications: string;
     observations: string;
+    clinical_data?: any; // JSONB
 }
 
 export default function ChronicPage() {
@@ -34,6 +35,13 @@ export default function ChronicPage() {
         condition: 'HAS',
         risk_level: 'Baixo'
     });
+
+    // Clinical Follow-up Modal State
+    const [selectedPatient, setSelectedPatient] = useState<ChronicPatient | null>(null);
+    const [clinicalData, setClinicalData] = useState<any>({});
+    const [isSavingClinical, setIsSavingClinical] = useState(false);
+    const [newNote, setNewNote] = useState('');
+    const [newCarePlan, setNewCarePlan] = useState('');
 
     const supabase = createClient();
 
@@ -85,6 +93,53 @@ export default function ChronicPage() {
             setIsLoading(false);
         }
     }
+
+    const openClinicalModal = (patient: ChronicPatient) => {
+        setSelectedPatient(patient);
+        setClinicalData(patient.clinical_data || {});
+        setNewNote('');
+        setNewCarePlan('');
+    };
+
+    const handleClinicalChange = (key: string, value: any) => {
+        setClinicalData((prev: any) => ({ ...prev, [key]: value }));
+    };
+
+    const saveClinicalData = async () => {
+        if (!selectedPatient) return;
+        setIsSavingClinical(true);
+        try {
+            let updatedClinicalData = { ...clinicalData };
+
+            if (newNote.trim() !== '' || newCarePlan.trim() !== '') {
+                const followUps = updatedClinicalData.followUps || [];
+                updatedClinicalData.followUps = [
+                    {
+                        date: new Date().toISOString(),
+                        text: newNote,
+                        carePlan: newCarePlan
+                    },
+                    ...followUps
+                ];
+            }
+
+            const { error } = await supabase
+                .from('chronic_patients')
+                .update({ clinical_data: updatedClinicalData })
+                .eq('id', selectedPatient.id);
+
+            if (error) throw error;
+
+            setPatients(patients.map(p => p.id === selectedPatient.id ? { ...p, clinical_data: updatedClinicalData } : p));
+            setSelectedPatient(null);
+            alert("Acompanhamento salvo com sucesso!");
+        } catch (error) {
+            console.error("Erro ao salvar acompanhamento:", error);
+            alert("Não foi possível salvar o acompanhamento.");
+        } finally {
+            setIsSavingClinical(false);
+        }
+    };
 
     const filteredPatients = patients.filter(p => {
         const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -333,6 +388,13 @@ export default function ChronicPage() {
                                                             <MessageCircle size={14} />
                                                         </button>
                                                     )}
+                                                    <button
+                                                        onClick={() => openClinicalModal(p)}
+                                                        className="p-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-1"
+                                                        title="Acompanhamento Clínico / Prontuário"
+                                                    >
+                                                        <CheckCircle size={14} /> <span className="text-[10px] uppercase font-bold hidden md:inline">Acompanhar</span>
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -343,6 +405,125 @@ export default function ChronicPage() {
                     )}
                 </div>
             </div>
+
+            {/* Modal de Acompanhamento Clínico */}
+            {
+                selectedPatient && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col border border-primary animate-in fade-in zoom-in-95">
+                            <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+                                <div>
+                                    <h3 className="text-lg font-bold text-primary flex items-center gap-2">
+                                        <CheckCircle size={20} />
+                                        Prontuário e Acompanhamento Clínico: {selectedPatient.name}
+                                    </h3>
+                                    <p className="text-xs text-muted mt-1">
+                                        <AlertTriangle size={12} className="inline mr-1 text-warning" />
+                                        Prescrição de enfermagem baseada no protocolo local
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => setSelectedPatient(null)}
+                                    className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
+                                >
+                                    <Plus size={20} className="rotate-45" />
+                                </button>
+                            </div>
+
+                            <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
+
+                                {/* Histórico do Paciente */}
+                                <div className="card p-4 border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/20">
+                                    <h4 className="font-semibold border-b dark:border-gray-700 pb-2 mb-3 bg-white dark:bg-transparent px-2 py-1 flex items-center gap-2">
+                                        <Activity size={16} className="text-primary" /> Histórico de Consultas
+                                    </h4>
+
+                                    <div className="mb-4 max-h-60 overflow-y-auto pr-2 flex flex-col gap-3">
+                                        {(!clinicalData?.followUps || clinicalData.followUps.length === 0) ? (
+                                            <p className="text-sm text-gray-500 italic text-center py-4 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+                                                Nenhuma evolução registrada ainda.
+                                            </p>
+                                        ) : (
+                                            clinicalData.followUps.map((note: any, index: number) => (
+                                                <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                                                    <div className="flex justify-between items-center mb-2 pb-1 border-b dark:border-gray-700 border-dashed">
+                                                        <span className="text-xs font-semibold text-primary flex items-center gap-1">
+                                                            <Calendar size={12} />
+                                                            {new Date(note.date).toLocaleDateString('pt-BR')} às {new Date(note.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                        </span>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        {note.text && (
+                                                            <div>
+                                                                <strong className="text-xs text-muted block mb-0.5">Observações Clínicas (SOAP):</strong>
+                                                                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{note.text}</p>
+                                                            </div>
+                                                        )}
+                                                        {note.carePlan && (
+                                                            <div className="bg-blue-50 dark:bg-blue-900/10 p-2 rounded border border-blue-100 dark:border-blue-900/30 mt-2">
+                                                                <strong className="text-xs text-blue-700 dark:text-blue-400 block mb-0.5 flex items-center gap-1">
+                                                                    <HeartPulse size={12} /> Plano de Ação / Autocuidado e Conduta:
+                                                                </strong>
+                                                                <p className="text-sm text-blue-800 dark:text-blue-300 whitespace-pre-wrap">{note.carePlan}</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Nova Consulta */}
+                                <div className="card p-4 border-primary/20 bg-primary/5">
+                                    <h4 className="font-semibold border-b border-primary/20 pb-2 mb-3 text-primary flex items-center gap-2">
+                                        <Plus size={16} /> Nova Evolução
+                                    </h4>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-xs font-semibold text-muted ml-1">Quadro Clínico (Observações / Exames)</label>
+                                            <textarea
+                                                className="form-control"
+                                                placeholder="Sintomas, queixas, aferição de sinais vitais, avaliação de exames..."
+                                                rows={4}
+                                                value={newNote}
+                                                onChange={e => setNewNote(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-xs font-semibold text-blue-600 ml-1">Plano de Autocuidado / Ação</label>
+                                            <textarea
+                                                className="form-control border-blue-200 focus:border-blue-400 bg-blue-50/30"
+                                                placeholder="Metas, orientações dietéticas, ajustes, prescrição, encaminhamentos..."
+                                                rows={4}
+                                                value={newCarePlan}
+                                                onChange={e => setNewCarePlan(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-4 border-t dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 flex justify-end gap-3 items-center">
+                                <span className="text-[10px] text-muted flex-1">✨ A nota será gravada na linha do tempo do paciente.</span>
+                                <button
+                                    onClick={() => setSelectedPatient(null)}
+                                    className="btn btn-outline"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={saveClinicalData}
+                                    disabled={isSavingClinical}
+                                    className="btn btn-primary flex items-center gap-2"
+                                >
+                                    {isSavingClinical ? <Loader2 size={16} className="animate-spin" /> : 'Salvar Evolução'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
         </div>
     );
 }
