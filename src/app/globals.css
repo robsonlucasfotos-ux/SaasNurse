@@ -663,6 +663,23 @@ p {
   -webkit-backdrop-filter: blur(4px);
 }
 
+/* ────────────────────────── MODAL OVERLAY ────────────────────────── */
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 9999 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.75) !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 1rem;
+}
+
 .max-h-\[90vh\] {
   max-height: 90vh;
 }

@@ -7,6 +7,7 @@ import {
     Save, X, Calendar, HeartPulse
 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
+import ModalPortal from '@/components/ModalPortal';
 
 interface ChronicPatient {
     id: string;
@@ -262,7 +263,7 @@ export default function ChronicPage() {
 
             {/* Add Form */}
             {isAdding && (
-                <form onSubmit={handleAddPatient} className="card bg-surface p-6 animate-in slide-in-from-top duration-300">
+                <form onSubmit={handleAddPatient} className="card bg-surface p-6">
                     <h3 className="mb-4">Cadastrar Paciente Crônico</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div><label className={labelCls}>Nome *</label><input type="text" className={inputCls} required onChange={e => setNewPatient({ ...newPatient, name: e.target.value })} /></div>
@@ -379,7 +380,7 @@ export default function ChronicPage() {
                                             <td className="p-3">
                                                 <div className="flex flex-wrap gap-1">
                                                     {insulinAlert && (
-                                                        <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${insulinAlert.type === 'danger' ? 'bg-red-600 text-white animate-pulse' : 'bg-orange-100 text-orange-700'}`}>
+                                                        <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${insulinAlert.type === 'danger' ? 'bg-red-600 text-white' : 'bg-orange-100 text-orange-700'}`}>
                                                             {insulinAlert.msg}
                                                         </span>
                                                     )}
@@ -429,173 +430,146 @@ export default function ChronicPage() {
             </div>
 
             {/* ============================================================ */}
-            {/* MODAL DE EDIÇÃO — renderizado na raiz para position:fixed     */}
+            {/* MODAL DE EDIÇÃO — via React Portal                           */}
             {/* ============================================================ */}
             {editingPatient && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{ backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}>
-                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-3xl max-h-[92vh] overflow-hidden flex flex-col border border-amber-200 dark:border-amber-900/50 animate-in zoom-in-95 duration-200">
-                        <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center bg-amber-50 dark:bg-amber-900/10">
-                            <h3 className="text-lg font-bold text-amber-800 dark:text-amber-300 flex items-center gap-2">
-                                <Pencil size={20} />
-                                Editar Paciente: <span className="text-amber-600">{editingPatient.name}</span>
-                            </h3>
-                            <button onClick={() => setEditingPatient(null)} className="p-2 hover:bg-amber-100 dark:hover:bg-amber-900/30 rounded-full transition-colors">
-                                <X size={20} className="text-amber-600" />
-                            </button>
-                        </div>
-
-                        <div className="p-6 overflow-y-auto flex-1">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="md:col-span-2">
-                                    <label className={labelCls}>Nome Completo *</label>
-                                    <input type="text" className={inputCls} value={editForm.name || ''} onChange={e => setEditForm({ ...editForm, name: e.target.value })} />
-                                </div>
-                                <div>
-                                    <label className={labelCls}>Idade</label>
-                                    <input type="number" className={inputCls} value={editForm.age || ''} onChange={e => setEditForm({ ...editForm, age: parseInt(e.target.value) })} />
-                                </div>
-                                <div>
-                                    <label className={labelCls}>Telefone / WhatsApp</label>
-                                    <input type="text" className={inputCls} value={editForm.phone || ''} onChange={e => setEditForm({ ...editForm, phone: e.target.value })} />
-                                </div>
-                                <div>
-                                    <label className={labelCls}>Condição Crônica</label>
-                                    <select className={inputCls} value={editForm.condition || 'HAS'} onChange={e => setEditForm({ ...editForm, condition: e.target.value as any })}>
-                                        <option value="HAS">Hipertensão (HAS)</option>
-                                        <option value="DM">Diabetes (DM)</option>
-                                        <option value="HAS e DM">Ambos (HAS e DM)</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className={labelCls}>Nível de Risco</label>
-                                    <select className={inputCls} value={editForm.risk_level || 'Baixo'} onChange={e => setEditForm({ ...editForm, risk_level: e.target.value as any })}>
-                                        <option value="Baixo">Risco Baixo</option>
-                                        <option value="Moderado">Risco Moderado</option>
-                                        <option value="Alto">Risco Alto</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className={labelCls}>Última Aferição de PA</label>
-                                    <input type="date" className={inputCls} value={editForm.last_bp_check || ''} onChange={e => setEditForm({ ...editForm, last_bp_check: e.target.value })} />
-                                </div>
-                                <div>
-                                    <label className={labelCls}>HbA1c Recente (%)</label>
-                                    <input type="number" step="0.1" className={inputCls} value={editForm.last_hba1c || ''} onChange={e => setEditForm({ ...editForm, last_hba1c: parseFloat(e.target.value) })} />
-                                </div>
-                                <div>
-                                    <label className={labelCls}>Data HbA1c</label>
-                                    <input type="date" className={inputCls} value={editForm.last_hba1c_date || ''} onChange={e => setEditForm({ ...editForm, last_hba1c_date: e.target.value })} />
-                                </div>
-                                <div>
-                                    <label className={labelCls}>Vencimento Receita Insulina</label>
-                                    <input type="date" className={inputCls} value={editForm.insulin_expiry_date || ''} onChange={e => setEditForm({ ...editForm, insulin_expiry_date: e.target.value })} />
-                                </div>
-                                <div className="md:col-span-2">
-                                    <label className={labelCls}>Medicações em Uso</label>
-                                    <input type="text" className={inputCls} placeholder="Ex: Losartana 50mg, Metformina 850mg..." value={editForm.medications || ''} onChange={e => setEditForm({ ...editForm, medications: e.target.value })} />
-                                </div>
-                                <div className="md:col-span-2">
-                                    <label className={labelCls}>Observações Clínicas</label>
-                                    <textarea className={inputCls} rows={3} value={editForm.observations || ''} onChange={e => setEditForm({ ...editForm, observations: e.target.value })} />
+                <ModalPortal>
+                    <div className="modal-overlay">
+                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-3xl max-h-[92vh] overflow-hidden flex flex-col border border-amber-200 dark:border-amber-900/50">
+                            <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center bg-amber-50 dark:bg-amber-900/10">
+                                <h3 className="text-lg font-bold text-amber-800 dark:text-amber-300 flex items-center gap-2">
+                                    <Pencil size={20} />
+                                    Editar: <span className="text-amber-600">{editingPatient.name}</span>
+                                </h3>
+                                <button onClick={() => setEditingPatient(null)} className="p-2 hover:bg-amber-100 dark:hover:bg-amber-900/30 rounded-full transition-colors">
+                                    <X size={20} className="text-amber-600" />
+                                </button>
+                            </div>
+                            <div className="p-6 overflow-y-auto flex-1">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="md:col-span-2"><label className={labelCls}>Nome Completo *</label><input type="text" className={inputCls} value={editForm.name || ''} onChange={e => setEditForm({ ...editForm, name: e.target.value })} /></div>
+                                    <div><label className={labelCls}>Idade</label><input type="number" className={inputCls} value={editForm.age || ''} onChange={e => setEditForm({ ...editForm, age: parseInt(e.target.value) })} /></div>
+                                    <div><label className={labelCls}>Telefone / WhatsApp</label><input type="text" className={inputCls} value={editForm.phone || ''} onChange={e => setEditForm({ ...editForm, phone: e.target.value })} /></div>
+                                    <div>
+                                        <label className={labelCls}>Condição Crônica</label>
+                                        <select className={inputCls} value={editForm.condition || 'HAS'} onChange={e => setEditForm({ ...editForm, condition: e.target.value as any })}>
+                                            <option value="HAS">Hipertensão (HAS)</option>
+                                            <option value="DM">Diabetes (DM)</option>
+                                            <option value="HAS e DM">Ambos (HAS e DM)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className={labelCls}>Nível de Risco</label>
+                                        <select className={inputCls} value={editForm.risk_level || 'Baixo'} onChange={e => setEditForm({ ...editForm, risk_level: e.target.value as any })}>
+                                            <option value="Baixo">Risco Baixo</option>
+                                            <option value="Moderado">Risco Moderado</option>
+                                            <option value="Alto">Risco Alto</option>
+                                        </select>
+                                    </div>
+                                    <div><label className={labelCls}>Última Aferição de PA</label><input type="date" className={inputCls} value={editForm.last_bp_check || ''} onChange={e => setEditForm({ ...editForm, last_bp_check: e.target.value })} /></div>
+                                    <div><label className={labelCls}>HbA1c Recente (%)</label><input type="number" step="0.1" className={inputCls} value={editForm.last_hba1c || ''} onChange={e => setEditForm({ ...editForm, last_hba1c: parseFloat(e.target.value) })} /></div>
+                                    <div><label className={labelCls}>Data HbA1c</label><input type="date" className={inputCls} value={editForm.last_hba1c_date || ''} onChange={e => setEditForm({ ...editForm, last_hba1c_date: e.target.value })} /></div>
+                                    <div><label className={labelCls}>Vencimento Receita Insulina</label><input type="date" className={inputCls} value={editForm.insulin_expiry_date || ''} onChange={e => setEditForm({ ...editForm, insulin_expiry_date: e.target.value })} /></div>
+                                    <div className="md:col-span-2"><label className={labelCls}>Medicações em Uso</label><input type="text" className={inputCls} placeholder="Ex: Losartana 50mg, Metformina 850mg..." value={editForm.medications || ''} onChange={e => setEditForm({ ...editForm, medications: e.target.value })} /></div>
+                                    <div className="md:col-span-2"><label className={labelCls}>Observações Clínicas</label><textarea className={inputCls} rows={3} value={editForm.observations || ''} onChange={e => setEditForm({ ...editForm, observations: e.target.value })} /></div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div className="p-4 border-t dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 flex justify-end gap-3">
-                            <button onClick={() => setEditingPatient(null)} className="btn btn-outline">Cancelar</button>
-                            <button onClick={handleSaveEdit} disabled={isSavingEdit} className="btn flex items-center gap-2 bg-amber-500 hover:bg-amber-600 border-none text-white">
-                                {isSavingEdit ? <Loader2 size={16} className="animate-spin" /> : <><Save size={16} /> Salvar Alterações</>}
-                            </button>
+                            <div className="p-4 border-t dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 flex justify-end gap-3">
+                                <button onClick={() => setEditingPatient(null)} className="btn btn-outline">Cancelar</button>
+                                <button onClick={handleSaveEdit} disabled={isSavingEdit} className="btn flex items-center gap-2 bg-amber-500 hover:bg-amber-600 border-none text-white">
+                                    {isSavingEdit ? <Loader2 size={16} className="animate-spin" /> : <><Save size={16} /> Salvar Alterações</>}
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </ModalPortal>
             )}
 
             {/* ============================================================ */}
-            {/* MODAL DE ACOMPANHAMENTO CLÍNICO — renderizado na raiz         */}
+            {/* MODAL ACOMPANHAMENTO CLÍNICO — via React Portal               */}
             {/* ============================================================ */}
             {selectedPatient && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{ backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}>
-                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col border border-primary animate-in fade-in zoom-in-95">
-                        <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
-                            <div>
-                                <h3 className="text-lg font-bold text-primary flex items-center gap-2">
-                                    <CheckCircle size={20} />
-                                    Prontuário: {selectedPatient.name}
-                                </h3>
-                                <p className="text-xs text-muted mt-1">
-                                    <AlertTriangle size={12} className="inline mr-1 text-warning" />
-                                    Prescrição de enfermagem baseada no protocolo local
-                                </p>
-                            </div>
-                            <button onClick={() => setSelectedPatient(null)} className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors">
-                                <X size={20} />
-                            </button>
-                        </div>
-
-                        <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
-                            {/* Histórico estilo Google Keep */}
-                            <div className="card p-4 border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/20">
-                                <h4 className="font-semibold border-b dark:border-gray-700 pb-2 mb-3 flex items-center gap-2">
-                                    <Activity size={16} className="text-primary" /> Histórico ({clinicalData?.followUps?.length || 0} nota{(clinicalData?.followUps?.length || 0) !== 1 ? 's' : ''})
-                                </h4>
-                                {(!clinicalData?.followUps || clinicalData.followUps.length === 0) ? (
-                                    <p className="text-sm text-gray-500 italic text-center py-4 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
-                                        Nenhuma evolução registrada ainda. Salve a primeira nota abaixo ↓
+                <ModalPortal>
+                    <div className="modal-overlay">
+                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col border border-primary">
+                            <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+                                <div>
+                                    <h3 className="text-lg font-bold text-primary flex items-center gap-2">
+                                        <CheckCircle size={20} />
+                                        Prontuário: {selectedPatient.name}
+                                    </h3>
+                                    <p className="text-xs text-muted mt-1">
+                                        <AlertTriangle size={12} className="inline mr-1 text-warning" />
+                                        Prescrição de enfermagem baseada no protocolo local
                                     </p>
-                                ) : (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-1">
-                                        {clinicalData.followUps.map((note: any, index: number) => (
-                                            <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                                                <div className="flex justify-between items-center mb-2 pb-1 border-b dark:border-gray-700 border-dashed">
-                                                    <span className="text-xs font-semibold text-primary flex items-center gap-1">
-                                                        <Calendar size={12} />
-                                                        {new Date(note.date).toLocaleDateString('pt-BR')} {new Date(note.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                                                    </span>
-                                                    {index === 0 && <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-bold">RECENTE</span>}
-                                                </div>
-                                                {note.text && <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{note.text}</p>}
-                                                {note.carePlan && (
-                                                    <div className="bg-blue-50 dark:bg-blue-900/10 p-2 rounded border border-blue-100 dark:border-blue-900/30 mt-2">
-                                                        <strong className="text-xs text-blue-700 dark:text-blue-400 block mb-0.5">Plano / Autocuidado:</strong>
-                                                        <p className="text-sm text-blue-800 dark:text-blue-300 whitespace-pre-wrap">{note.carePlan}</p>
+                                </div>
+                                <button onClick={() => setSelectedPatient(null)} className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors">
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
+                                <div className="card p-4 border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/20">
+                                    <h4 className="font-semibold border-b dark:border-gray-700 pb-2 mb-3 flex items-center gap-2">
+                                        <Activity size={16} className="text-primary" /> Histórico ({clinicalData?.followUps?.length || 0} nota{(clinicalData?.followUps?.length || 0) !== 1 ? 's' : ''})
+                                    </h4>
+                                    {(!clinicalData?.followUps || clinicalData.followUps.length === 0) ? (
+                                        <p className="text-sm text-gray-500 italic text-center py-4 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+                                            Nenhuma evolução registrada ainda. Salve a primeira nota abaixo ↓
+                                        </p>
+                                    ) : (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-1">
+                                            {clinicalData.followUps.map((note: any, index: number) => (
+                                                <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                                                    <div className="flex justify-between items-center mb-2 pb-1 border-b dark:border-gray-700 border-dashed">
+                                                        <span className="text-xs font-semibold text-primary flex items-center gap-1">
+                                                            <Calendar size={12} />
+                                                            {new Date(note.date).toLocaleDateString('pt-BR')} {new Date(note.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                        </span>
+                                                        {index === 0 && <span className="text-[9px] font-bold" style={{ background: '#eff6ff', color: '#1d4ed8', padding: '2px 6px', borderRadius: '4px' }}>RECENTE</span>}
                                                     </div>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
+                                                    {note.text && <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{note.text}</p>}
+                                                    {note.carePlan && (
+                                                        <div className="mt-2 p-2 rounded border" style={{ background: '#eff6ff', borderColor: '#bfdbfe' }}>
+                                                            <strong className="text-xs" style={{ color: '#1d4ed8', display: 'block', marginBottom: '2px' }}>Plano / Autocuidado:</strong>
+                                                            <p className="text-sm whitespace-pre-wrap" style={{ color: '#1e40af' }}>{note.carePlan}</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
 
-                            {/* Nova Evolução */}
-                            <div className="card p-4 border-primary/20 bg-primary/5">
-                                <h4 className="font-semibold border-b border-primary/20 pb-2 mb-3 text-primary flex items-center gap-2">
-                                    <Plus size={16} /> Nova Evolução
-                                </h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className={labelCls}>Quadro Clínico / Observações</label>
-                                        <textarea className={inputCls} placeholder="Sintomas, queixas, sinais vitais, exames..." rows={4} value={newNote} onChange={e => setNewNote(e.target.value)} />
+                                <div className="card p-4" style={{ borderColor: 'rgba(29,78,216,0.2)', background: 'rgba(29,78,216,0.03)' }}>
+                                    <h4 className="font-semibold pb-2 mb-3 text-primary flex items-center gap-2" style={{ borderBottom: '1px solid rgba(29,78,216,0.15)' }}>
+                                        <Plus size={16} /> Nova Nota / Evolução
+                                    </h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className={labelCls}>Observações Clínicas</label>
+                                            <textarea className={inputCls} placeholder="Sintomas, queixas, sinais vitais, exames..." rows={4} value={newNote} onChange={e => setNewNote(e.target.value)} />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-bold uppercase mb-1" style={{ color: '#2563eb' }}>Plano de Autocuidado / Ação</label>
+                                            <textarea className={inputCls} placeholder="Metas, orientações, ajustes, encaminhamentos..." rows={4} value={newCarePlan} onChange={e => setNewCarePlan(e.target.value)} style={{ borderColor: '#bfdbfe', background: 'rgba(239,246,255,0.3)' }} />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label className="block text-[10px] font-bold text-blue-600 uppercase mb-1">Plano de Autocuidado / Ação</label>
-                                        <textarea className={`${inputCls} border-blue-200 focus:border-blue-400 bg-blue-50/30`} placeholder="Metas, orientações, ajustes, encaminhamentos..." rows={4} value={newCarePlan} onChange={e => setNewCarePlan(e.target.value)} />
+                                    <div className="mt-3 flex justify-end">
+                                        <button onClick={saveClinicalData} disabled={isSavingClinical} className="btn btn-primary flex items-center gap-2">
+                                            {isSavingClinical ? <Loader2 size={16} className="animate-spin" /> : <><Plus size={16} /> Salvar Nota</>}
+                                        </button>
                                     </div>
                                 </div>
-                                <div className="mt-3 flex justify-end">
-                                    <button onClick={saveClinicalData} disabled={isSavingClinical} className="btn btn-primary flex items-center gap-2">
-                                        {isSavingClinical ? <Loader2 size={16} className="animate-spin" /> : <><Plus size={16} /> Salvar Nota</>}
-                                    </button>
-                                </div>
                             </div>
-                        </div>
 
-                        <div className="p-4 border-t dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 flex justify-end gap-3 items-center">
-                            <span className="text-[10px] text-muted flex-1">✨ Cada nota é salva na linha do tempo do paciente.</span>
-                            <button onClick={() => setSelectedPatient(null)} className="btn btn-outline">Fechar</button>
+                            <div className="p-4 border-t dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 flex justify-end gap-3 items-center">
+                                <span className="text-[10px] text-muted flex-1">✨ Cada nota é salva permanentemente no prontuário.</span>
+                                <button onClick={() => setSelectedPatient(null)} className="btn btn-outline">Fechar</button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </ModalPortal>
             )}
         </div>
     );
