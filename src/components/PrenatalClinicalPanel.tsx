@@ -18,7 +18,7 @@ export default function PrenatalClinicalPanel({
     const followUps: any[] = clinicalData?.followUps || [];
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" style={{ backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}>
             <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col border border-pink-200 dark:border-pink-900/50 overflow-hidden animate-in zoom-in-95 duration-200">
 
                 {/* Header */}

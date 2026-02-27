@@ -432,7 +432,7 @@ export default function ChronicPage() {
             {/* MODAL DE EDIÇÃO — renderizado na raiz para position:fixed     */}
             {/* ============================================================ */}
             {editingPatient && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{ backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}>
                     <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-3xl max-h-[92vh] overflow-hidden flex flex-col border border-amber-200 dark:border-amber-900/50 animate-in zoom-in-95 duration-200">
                         <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center bg-amber-50 dark:bg-amber-900/10">
                             <h3 className="text-lg font-bold text-amber-800 dark:text-amber-300 flex items-center gap-2">
@@ -515,7 +515,7 @@ export default function ChronicPage() {
             {/* MODAL DE ACOMPANHAMENTO CLÍNICO — renderizado na raiz         */}
             {/* ============================================================ */}
             {selectedPatient && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{ backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}>
                     <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col border border-primary animate-in fade-in zoom-in-95">
                         <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
                             <div>
