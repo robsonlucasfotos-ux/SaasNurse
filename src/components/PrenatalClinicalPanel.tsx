@@ -46,7 +46,7 @@ export default function PrenatalClinicalPanel({
             ? 'bg-purple-100 text-purple-800 border-purple-200'
             : 'bg-blue-100 text-blue-800 border-blue-200';
 
-    const progressPercent = weeks !== null ? Math.min(Math.round((weeks / 40) * 100), 100) : 0;
+    const progressPercent = (weeks !== null && !isNaN(weeks)) ? Math.min(Math.round((weeks / 40) * 100), 100) : 0;
 
     return (
         <ModalPortal>

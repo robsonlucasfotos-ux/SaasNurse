@@ -394,19 +394,21 @@ export default function ChildCare() {
             </div>
 
             {/* ── CLINICAL PANEL ── */}
-            <ChildClinicalPanel
-                child={selectedPatient}
-                clinicalData={clinicalData}
-                handleClinicalChange={(key: string, val: any) => setClinicalData((prev: any) => ({ ...prev, [key]: val }))}
-                newNote={newNote}
-                setNewNote={setNewNote}
-                newCarePlan={newCarePlan}
-                setNewCarePlan={setNewCarePlan}
-                saveClinicalData={saveClinicalData}
-                isSavingClinical={isSavingClinical}
-                onClose={() => setSelectedPatient(null)}
-                milestones={childMilestones}
-            />
+            {selectedPatient && (
+                <ChildClinicalPanel
+                    child={selectedPatient}
+                    clinicalData={clinicalData}
+                    handleClinicalChange={(key: string, val: any) => setClinicalData((prev: any) => ({ ...prev, [key]: val }))}
+                    newNote={newNote}
+                    setNewNote={setNewNote}
+                    newCarePlan={newCarePlan}
+                    setNewCarePlan={setNewCarePlan}
+                    saveClinicalData={saveClinicalData}
+                    isSavingClinical={isSavingClinical}
+                    onClose={() => setSelectedPatient(null)}
+                    milestones={childMilestones}
+                />
+            )}
 
             {/* ── EDIT MODAL ── */}
             {editingChild && (

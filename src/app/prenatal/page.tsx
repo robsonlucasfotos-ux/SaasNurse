@@ -562,24 +562,23 @@ export default function PrenatalPage() {
             )}
 
             {/* Clinical Follow-up Modal */}
-            <PrenatalClinicalPanel
-                patient={selectedPatient}
-                clinicalData={clinicalData}
-                handleClinicalChange={(key: string, val: any) => {
-                    const updated = { ...clinicalData, [key]: val };
-                    setClinicalData(updated);
-                }}
-                newNote={newNote}
-                setNewNote={setNewNote}
-                newCarePlan={newCarePlan}
-                setNewCarePlan={setNewCarePlan}
-                saveClinicalData={saveClinicalData}
-                isSavingClinical={isSavingClinical}
-                onClose={() => setSelectedPatient(null)}
-                onConcludePregnancy={handleConcludePregnancy}
-                trimestersData={trimestersData}
-                cofenMedications={cofenMedications}
-            />
+            {selectedPatient && (
+                <PrenatalClinicalPanel
+                    patient={selectedPatient}
+                    clinicalData={clinicalData}
+                    handleClinicalChange={(key: string, val: any) => setClinicalData((prev: any) => ({ ...prev, [key]: val }))}
+                    newNote={newNote}
+                    setNewNote={setNewNote}
+                    newCarePlan={newCarePlan}
+                    setNewCarePlan={setNewCarePlan}
+                    saveClinicalData={saveClinicalData}
+                    isSavingClinical={isSavingClinical}
+                    onClose={() => setSelectedPatient(null)}
+                    onConcludePregnancy={handleConcludePregnancy}
+                    trimestersData={trimestersData}
+                    cofenMedications={cofenMedications}
+                />
+            )}
 
             {/* Edit Patient Modal */}
             {editingPatient && (
