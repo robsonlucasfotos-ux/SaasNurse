@@ -634,6 +634,61 @@ p {
   overflow: hidden;
 }
 
+/* Positioning & Layout Utilities */
+.fixed {
+  position: fixed;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
+.z-40 {
+  z-index: 40;
+}
+
+.bg-black\/50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.max-h-\[90vh\] {
+  max-height: 90vh;
+}
+
+.max-w-4xl {
+  max-width: 56rem;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.zoom-in-95 {
+  transform: scale(0.95);
+}
+
+.animate-in {
+  animation-duration: 200ms;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+.fade-in {
+  animation-name: fadeIn;
+}
+
 /* ────────────────────────── ANIMATIONS ────────────────────────── */
 @keyframes fadeIn {
   from {
