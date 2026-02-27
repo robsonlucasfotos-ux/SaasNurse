@@ -59,6 +59,15 @@ export default function ChronicPage() {
     const [newNote, setNewNote] = useState('');
     const [newCarePlan, setNewCarePlan] = useState('');
 
+    // Scroll lock for modals
+    useEffect(() => {
+        if (editingPatient || selectedPatient) {
+            document.body.classList.add('no-scroll');
+        } else {
+            document.body.classList.remove('no-scroll');
+        }
+    }, [editingPatient, selectedPatient]);
+
     const supabase = createClient();
 
     useEffect(() => {
@@ -429,13 +438,12 @@ export default function ChronicPage() {
                 </div>
             </div>
 
-            {/* ============================================================ */}
             {/* MODAL DE EDIÇÃO — via React Portal                           */}
             {/* ============================================================ */}
             {editingPatient && (
                 <ModalPortal>
                     <div className="modal-overlay">
-                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-3xl max-h-[92vh] overflow-hidden flex flex-col border border-amber-200 dark:border-amber-900/50">
+                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-3xl max-h-[92vh] overflow-hidden flex flex-col border border-amber-200 dark:border-amber-900/50" style={{ zIndex: 9999 }}>
                             <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center bg-amber-50 dark:bg-amber-900/10">
                                 <h3 className="text-lg font-bold text-amber-800 dark:text-amber-300 flex items-center gap-2">
                                     <Pencil size={20} />
@@ -485,13 +493,12 @@ export default function ChronicPage() {
                 </ModalPortal>
             )}
 
-            {/* ============================================================ */}
             {/* MODAL ACOMPANHAMENTO CLÍNICO — via React Portal               */}
             {/* ============================================================ */}
             {selectedPatient && (
                 <ModalPortal>
                     <div className="modal-overlay">
-                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col border border-primary">
+                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col border border-primary" style={{ zIndex: 9999 }}>
                             <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
                                 <div>
                                     <h3 className="text-lg font-bold text-primary flex items-center gap-2">

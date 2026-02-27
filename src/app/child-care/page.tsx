@@ -100,6 +100,15 @@ export default function ChildCare() {
     const [newNote, setNewNote] = useState('');
     const [newCarePlan, setNewCarePlan] = useState('');
 
+    // Scroll lock for modals
+    useEffect(() => {
+        if (editingChild || selectedPatient) {
+            document.body.classList.add('no-scroll');
+        } else {
+            document.body.classList.remove('no-scroll');
+        }
+    }, [editingChild, selectedPatient]);
+
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -257,29 +266,37 @@ export default function ChildCare() {
 
     return (
         <div className="flex flex-col h-full gap-6 pb-20">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center bg-gradient-to-r from-blue-600 to-indigo-600 p-6 rounded-2xl shadow-lg text-white">
                 <div>
-                    <h2 className="text-2xl font-bold flex items-center gap-2">
-                        <Baby color="var(--primary)" />
+                    <h2 className="text-3xl font-extrabold flex items-center gap-3">
+                        <div className="bg-white/20 p-2 rounded-xl backdrop-blur-sm">
+                            <Baby size={32} className="text-white" />
+                        </div>
                         Puericultura
                     </h2>
-                    <p className="text-muted text-sm mt-1">Crescimento, Desenvolvimento e Aleitamento.</p>
+                    <p className="text-blue-100 text-sm mt-2 font-medium opacity-90">Crescimento, Desenvolvimento e Aleitamento Materno Exclusivo.</p>
+                </div>
+                <div className="hidden md:flex gap-4">
+                    <div className="bg-white/10 px-4 py-2 rounded-xl border border-white/20 backdrop-blur-sm">
+                        <p className="text-[10px] uppercase font-bold tracking-wider opacity-60">Total de Crianças</p>
+                        <p className="text-2xl font-bold">{children.length}</p>
+                    </div>
                 </div>
             </div>
 
             {/* Ações (Adicionar Criança) */}
-            <div className="flex justify-between items-center bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100">
+            <div className="flex justify-between items-center bg-white dark:bg-gray-800 p-6 rounded-2xl border border-blue-100 dark:border-blue-900/30 shadow-sm hover:shadow-md transition-all duration-300">
                 <div className="flex flex-col">
-                    <h3 className="font-semibold flex items-center gap-2 text-blue-800 dark:text-blue-200">
-                        <Users size={18} /> Triagem Ativa
+                    <h3 className="font-bold flex items-center gap-2 text-blue-700 dark:text-blue-300 text-lg">
+                        <Users size={22} className="text-blue-500" /> Triagem Ativa
                     </h3>
-                    <span className="text-sm text-blue-600/80">Registre novos nascimentos e crianças sob observação.</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Cadastre novos nascimentos para acompanhamento preventivo.</span>
                 </div>
                 <button
                     onClick={() => setShowForm(!showForm)}
-                    className="btn bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+                    className={`btn flex items-center gap-2 px-6 py-3 font-bold rounded-xl transition-all duration-300 ${showForm ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200 dark:shadow-none'}`}
                 >
-                    <Plus size={18} /> {showForm ? 'Cancelar' : 'Nova Criança'}
+                    {showForm ? <X size={20} /> : <Plus size={20} />} {showForm ? 'Fechar' : 'Nova Criança'}
                 </button>
             </div>
 
@@ -336,8 +353,11 @@ export default function ChildCare() {
             {/* Listagem de Crianças Inteligente */}
             {!isLoading && children.length > 0 && (
                 <div className="card w-full border-blue-200">
-                    <h3 className="mb-4 text-blue-800 font-semibold flex items-center gap-2">
-                        <Baby size={18} /> Crianças do Módulo ({children.length})
+                    <h3 className="mb-4 text-blue-800 dark:text-blue-300 font-bold flex items-center gap-2 text-lg">
+                        <div className="bg-blue-100 dark:bg-blue-900/40 p-1.5 rounded-lg">
+                            <Baby size={20} className="text-blue-600 dark:text-blue-400" />
+                        </div>
+                        Crianças do Módulo ({children.length})
                     </h3>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse min-w-[700px]">
@@ -434,16 +454,21 @@ export default function ChildCare() {
             )}
 
             {/* Protocolos Literários CD */}
-            <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-gray-800 p-6 rounded-2xl border border-blue-100 dark:border-blue-900/30 shadow-sm">
                 <div>
-                    <h2>Protocolos Literários CD</h2>
-                    <p className="text-muted">Avaliação do crescimento e desenvolvimento por marcos de idade.</p>
+                    <h2 className="text-xl font-bold flex items-center gap-2 text-gray-800 dark:text-gray-100">
+                        <div className="bg-purple-100 dark:bg-purple-900/40 p-2 rounded-lg">
+                            <Activity size={20} className="text-purple-600 dark:text-purple-400" />
+                        </div>
+                        Protocolos Literários CD
+                    </h2>
+                    <p className="text-muted text-sm mt-1">Avaliação do crescimento e desenvolvimento por marcos de idade.</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                     {childMilestones.map(m => (
                         <button
                             key={m.id}
-                            className={`btn ${activeTab === m.id ? 'btn-primary' : 'btn-outline'}`}
+                            className={`btn px-4 py-2 font-bold rounded-xl transition-all duration-300 ${activeTab === m.id ? 'bg-purple-600 text-white shadow-lg shadow-purple-200 dark:shadow-none' : 'bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100'}`}
                             onClick={() => setActiveTab(m.id)}
                         >
                             {m.title}
@@ -455,8 +480,10 @@ export default function ChildCare() {
             <div className="card w-full flex-1">
                 {childMilestones.filter((m: any) => m.id === activeTab).map((m: any) => (
                     <div key={m.id} className="animate-fade-in">
-                        <h3 className="flex items-center gap-2 mb-6">
-                            <Baby color="var(--primary)" />
+                        <h3 className="flex items-center gap-2 mb-8 text-xl font-bold text-gray-800 dark:text-gray-100">
+                            <div className="bg-blue-100 dark:bg-blue-900/40 p-2 rounded-lg text-blue-600">
+                                <Plus size={24} />
+                            </div>
                             Condutas: {m.title}
                         </h3>
 
@@ -505,7 +532,7 @@ export default function ChildCare() {
             {editingChild && (
                 <ModalPortal>
                     <div className="modal-overlay">
-                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col border" style={{ borderColor: '#fde68a' }}>
+                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col border" style={{ borderColor: '#fde68a', zIndex: 9999 }}>
                             <div className="p-4 border-b flex justify-between items-center" style={{ background: '#fffbeb' }}>
                                 <h3 className="text-lg font-bold flex items-center gap-2" style={{ color: '#92400e' }}>
                                     <Pencil size={18} /> Editar: {editingChild.name}
@@ -567,7 +594,7 @@ export default function ChildCare() {
             {selectedPatient && (
                 <ModalPortal>
                     <div className="modal-overlay">
-                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col border border-primary">
+                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col border border-primary" style={{ zIndex: 9999 }}>
                             <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
                                 <div>
                                     <h3 className="text-lg font-bold text-primary flex items-center gap-2">

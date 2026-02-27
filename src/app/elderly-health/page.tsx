@@ -32,6 +32,15 @@ export default function ElderlyHealthPage() {
     const [newNote, setNewNote] = useState('');
     const [newCarePlan, setNewCarePlan] = useState('');
 
+    // Scroll lock for modals
+    useEffect(() => {
+        if (editingPatient || selectedPatient) {
+            document.body.classList.add('no-scroll');
+        } else {
+            document.body.classList.remove('no-scroll');
+        }
+    }, [editingPatient, selectedPatient]);
+
     useEffect(() => {
         loadPatients();
     }, []);
@@ -270,7 +279,7 @@ export default function ElderlyHealthPage() {
             {editingPatient && (
                 <ModalPortal>
                     <div className="modal-overlay">
-                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-lg max-h-[92vh] overflow-hidden flex flex-col border" style={{ borderColor: '#fde68a' }}>
+                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-lg max-h-[92vh] overflow-hidden flex flex-col border" style={{ borderColor: '#fde68a', zIndex: 9999 }}>
                             <div className="p-4 border-b flex justify-between items-center" style={{ background: '#fffbeb' }}>
                                 <h3 className="text-lg font-bold flex items-center gap-2" style={{ color: '#92400e' }}>
                                     <Pencil size={18} /> Editar: {editingPatient.name}
@@ -318,7 +327,7 @@ export default function ElderlyHealthPage() {
             {selectedPatient && (
                 <ModalPortal>
                     <div className="modal-overlay">
-                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col border border-primary">
+                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col border border-primary" style={{ zIndex: 9999 }}>
                             <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
                                 <div>
                                     <h3 className="text-lg font-bold text-primary flex items-center gap-2">

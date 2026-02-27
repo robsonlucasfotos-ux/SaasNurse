@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { AlertTriangle, CheckCircle, HeartPulse, Plus, Loader2, FileText, Activity, Baby, BookOpen, Heart } from 'lucide-react';
 import ModalPortal from './ModalPortal';
 
@@ -14,6 +15,11 @@ export default function PrenatalClinicalPanel({
     onClose,
     onConcludePregnancy,
 }: any) {
+    useEffect(() => {
+        document.body.classList.add('no-scroll');
+        return () => document.body.classList.remove('no-scroll');
+    }, []);
+
     if (!patient) return null;
 
     const followUps: any[] = clinicalData?.followUps || [];
@@ -21,7 +27,7 @@ export default function PrenatalClinicalPanel({
     return (
         <ModalPortal>
             <div className="modal-overlay">
-                <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col border border-pink-200 dark:border-pink-900/50 overflow-hidden animate-in zoom-in-95 duration-200">
+                <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col border border-pink-200 dark:border-pink-900/50 overflow-hidden animate-in zoom-in-95 duration-200" style={{ zIndex: 9999 }}>
 
                     {/* Header */}
                     <div className="p-4 border-b border-pink-100 dark:border-gray-800 flex justify-between items-start bg-pink-50 dark:bg-pink-900/10 flex-shrink-0">

@@ -770,6 +770,7 @@ textarea.form-control {
 [data-theme='dark'] .btn-primary {
   box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
 }
+
 /* ============================================================ */
 /* MODAL OVERLAY — fundo escuro garantido para todos os modais  */
 /* ============================================================ */
@@ -779,16 +780,21 @@ textarea.form-control {
   left: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
-  background: rgba(0, 0, 0, 0.75) !important;
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  z-index: 9999 !important;
+  z-index: 9998 !important;
   padding: 1rem !important;
   box-sizing: border-box !important;
-  overflow-y: auto !important;
+}
+
+.no-scroll {
+  overflow: hidden !important;
+  padding-right: var(--scrollbar-gutter, 0px);
+  /* Prevent layout shift if possible */
 }
 
 /* Janela popup interna - use esta classe no div interno do modal */

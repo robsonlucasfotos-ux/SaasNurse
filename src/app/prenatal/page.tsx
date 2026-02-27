@@ -90,6 +90,15 @@ export default function PrenatalPage() {
     const [newNote, setNewNote] = useState('');
     const [newCarePlan, setNewCarePlan] = useState('');
 
+    // Scroll lock for modals
+    useEffect(() => {
+        if (editingPatient || selectedPatient) {
+            document.body.classList.add('no-scroll');
+        } else {
+            document.body.classList.remove('no-scroll');
+        }
+    }, [editingPatient, selectedPatient]);
+
     // Add Patient Form State
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({
@@ -672,7 +681,7 @@ export default function PrenatalPage() {
             {editingPatient && (
                 <ModalPortal>
                     <div className="modal-overlay">
-                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col border" style={{ borderColor: '#fde68a' }}>
+                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col border" style={{ borderColor: '#fde68a', zIndex: 9999 }}>
                             <div className="p-4 border-b flex justify-between items-center" style={{ background: '#fffbeb' }}>
                                 <h3 className="text-lg font-bold flex items-center gap-2" style={{ color: '#92400e' }}>
                                     <Pencil size={18} /> Editar: {editingPatient.name}

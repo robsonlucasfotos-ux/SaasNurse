@@ -1,7 +1,10 @@
 -- COLE ISSO NO SQL EDITOR DO SUPABASE E EXECUTE
 
+-- 0. Remove qualquer tabela "patients" antiga e com erro para podermos criar a correta do zero
+DROP TABLE IF EXISTS public.patients CASCADE;
+
 -- 1. Criação da tabela unificada de pacientes
-CREATE TABLE IF NOT EXISTS public.patients (
+CREATE TABLE public.patients (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES auth.users(id),
     name TEXT NOT NULL,
@@ -35,34 +38,13 @@ CREATE TABLE IF NOT EXISTS public.patients (
 -- Ativar RLS
 ALTER TABLE public.patients ENABLE ROW LEVEL SECURITY;
 
--- Criar política de segurança (o usuário só vê e edita os próprios pacientes)
-DO $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_policies WHERE tablename = 'patients' AND policyname = 'Users can view their own patients'
-    ) THEN
-        CREATE POLICY "Users can view their own patients" ON public.patients FOR SELECT USING (auth.uid() = user_id);
-    END IF;
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_policies WHERE tablename = 'patients' AND policyname = 'Users can insert their own patients'
-    ) THEN
-        CREATE POLICY "Users can insert their own patients" ON public.patients FOR INSERT WITH CHECK (auth.uid() = user_id);
-    END IF;
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_policies WHERE tablename = 'patients' AND policyname = 'Users can update their own patients'
-    ) THEN
-        CREATE POLICY "Users can update their own patients" ON public.patients FOR UPDATE USING (auth.uid() = user_id);
-    END IF;
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_policies WHERE tablename = 'patients' AND policyname = 'Users can delete their own patients'
-    ) THEN
-        CREATE POLICY "Users can delete their own patients" ON public.patients FOR DELETE USING (auth.uid() = user_id);
-    END IF;
-END
-$$;
+-- Criar políticas de segurança (o usuário só vê e edita os próprios pacientes)
+CREATE POLICY "Users can view their own patients" ON public.patients FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert their own patients" ON public.patients FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update their own patients" ON public.patients FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete their own patients" ON public.patients FOR DELETE USING (auth.uid() = user_id);
 
 -- 2. Migração de dados: Gestantes -> Patients
--- Apenas migramos se a tabela antiga existir
 DO $$
 BEGIN
     IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'pregnant_women') THEN
@@ -75,7 +57,7 @@ BEGIN
 END
 $$;
 
--- 3. Migração de dados: Crônicos -> Patients (caso exista a tabela antiga e tenha dados)
+-- 3. Migração de dados: Crônicos -> Patients
 DO $$
 BEGIN
     IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'chronic_patients') THEN
