@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { cofenMedications, authorizedExams } from '@/data/cofen-meds';
-import { Search, Phone, AlertTriangle, Calculator, CheckCircle, HeartPulse, MessageCircle, Plus, Users, Loader2, Baby } from 'lucide-react';
+import { Search, Phone, AlertTriangle, Calculator, CheckCircle, HeartPulse, MessageCircle, Plus, Users, Loader2, Baby, Pencil, Save, X } from 'lucide-react';
 import PrenatalClinicalPanel from '@/components/PrenatalClinicalPanel';
+import ModalPortal from '@/components/ModalPortal';
 
 interface PregnantWoman {
     id: string;
@@ -76,6 +77,11 @@ export default function PrenatalPage() {
     const [isSaving, setIsSaving] = useState(false);
 
     const [stats, setStats] = useState({ trim1: 0, trim2: 0, trim3: 0, total: 0 });
+
+    // Edit Patient State
+    const [editingPatient, setEditingPatient] = useState<PregnantWoman | null>(null);
+    const [editForm, setEditForm] = useState<Partial<PregnantWoman>>({});
+    const [isSavingEdit, setIsSavingEdit] = useState(false);
 
     // Clinical Follow-up Modal State
     const [selectedPatient, setSelectedPatient] = useState<PregnantWoman | null>(null);
@@ -219,7 +225,40 @@ export default function PrenatalPage() {
         setClinicalData(patient.clinical_data || {});
         setNewNote('');
         setNewCarePlan('');
+        setEditingPatient(null);
     };
+
+    function openEditModal(patient: PregnantWoman) {
+        setEditingPatient(patient);
+        setEditForm({ ...patient });
+        setSelectedPatient(null);
+    }
+
+    async function handleSaveEdit() {
+        if (!editingPatient) return;
+        setIsSavingEdit(true);
+        try {
+            const { error } = await supabase
+                .from('patients')
+                .update({
+                    name: editForm.name,
+                    age: editForm.age,
+                    phone: editForm.phone || null,
+                    risk_level: editForm.risk_level,
+                    risk_reason: editForm.risk_reason || null,
+                    dum: editForm.dum,
+                    dpp: editForm.dpp || null,
+                })
+                .eq('id', editingPatient.id);
+            if (error) throw error;
+            setPatients(prev => prev.map(p => p.id === editingPatient.id ? { ...p, ...editForm } as PregnantWoman : p));
+            setEditingPatient(null);
+        } catch (err) {
+            alert('Erro ao salvar: ' + (err as any)?.message);
+        } finally {
+            setIsSavingEdit(false);
+        }
+    }
 
     const handleClinicalChange = (key: string, value: any) => {
         setClinicalData((prev: any) => ({ ...prev, [key]: value }));
@@ -525,6 +564,13 @@ export default function PrenatalPage() {
                                                 <CheckCircle size={16} /> Acompanhar
                                             </button>
                                             <button
+                                                onClick={() => openEditModal(p)}
+                                                className="p-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition-colors"
+                                                title="Editar dados da gestante"
+                                            >
+                                                <Pencil size={16} />
+                                            </button>
+                                            <button
                                                 onClick={() => {
                                                     if (window.confirm(`Deseja registrar o parto ou encerramento da gestação para ${p.name}? A paciente não aparecerá mais nesta lista, mas continuará salva na "Saúde da Mulher".`)) {
                                                         const outcome = window.prompt("Digite o desfecho (ex: 'Parto Normal', 'Cesárea' ou 'Aborto'):", "Parto");
@@ -620,6 +666,68 @@ export default function PrenatalPage() {
                     onClose={() => setSelectedPatient(null)}
                     onConcludePregnancy={handleConcludePregnancy}
                 />
+            )}
+
+            {/* Modal de Edição da Gestante */}
+            {editingPatient && (
+                <ModalPortal>
+                    <div className="modal-overlay">
+                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col border" style={{ borderColor: '#fde68a' }}>
+                            <div className="p-4 border-b flex justify-between items-center" style={{ background: '#fffbeb' }}>
+                                <h3 className="text-lg font-bold flex items-center gap-2" style={{ color: '#92400e' }}>
+                                    <Pencil size={18} /> Editar: {editingPatient.name}
+                                </h3>
+                                <button onClick={() => setEditingPatient(null)} className="p-2 rounded-full hover:bg-amber-100 transition-colors">
+                                    <X size={18} style={{ color: '#b45309' }} />
+                                </button>
+                            </div>
+                            <div className="p-6 overflow-y-auto flex-1">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="md:col-span-2">
+                                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Nome Completo *</label>
+                                        <input type="text" className="form-control" value={editForm.name || ''} onChange={e => setEditForm({ ...editForm, name: e.target.value })} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Idade</label>
+                                        <input type="number" className="form-control" value={editForm.age || ''} onChange={e => setEditForm({ ...editForm, age: parseInt(e.target.value) || null })} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Telefone / WhatsApp</label>
+                                        <input type="tel" className="form-control" value={editForm.phone || ''} onChange={e => setEditForm({ ...editForm, phone: e.target.value })} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">DUM (Última Menstruação)</label>
+                                        <input type="date" className="form-control" value={editForm.dum || ''} onChange={e => setEditForm({ ...editForm, dum: e.target.value })} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">DPP (Data Provável do Parto)</label>
+                                        <input type="date" className="form-control" value={editForm.dpp || ''} onChange={e => setEditForm({ ...editForm, dpp: e.target.value })} />
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Classificação de Risco</label>
+                                        <select className="form-control" value={editForm.risk_level || 'Habitual'} onChange={e => setEditForm({ ...editForm, risk_level: e.target.value })}>
+                                            <option value="Habitual">Risco Habitual (Baixo)</option>
+                                            <option value="Moderado">Risco Moderado</option>
+                                            <option value="Alto">Alto Risco</option>
+                                        </select>
+                                    </div>
+                                    {editForm.risk_level === 'Alto' && (
+                                        <div className="md:col-span-2">
+                                            <label className="block text-[10px] font-bold text-red-500 uppercase mb-1">Motivo do Alto Risco</label>
+                                            <textarea className="form-control border-red-300" rows={2} value={editForm.risk_reason || ''} onChange={e => setEditForm({ ...editForm, risk_reason: e.target.value })} />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="p-4 border-t bg-gray-50 dark:bg-gray-800/50 flex justify-end gap-3">
+                                <button onClick={() => setEditingPatient(null)} className="btn btn-outline">Cancelar</button>
+                                <button onClick={handleSaveEdit} disabled={isSavingEdit} className="btn flex items-center gap-2" style={{ background: '#f59e0b', color: 'white', border: 'none' }}>
+                                    {isSavingEdit ? <Loader2 size={16} className="animate-spin" /> : <><Save size={16} /> Salvar</>}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </ModalPortal>
             )}
         </div>
     );
