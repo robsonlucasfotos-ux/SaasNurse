@@ -518,8 +518,8 @@ export default function PrenatalPage() {
 
                                         <div className="mt-auto pt-3 border-t dark:border-gray-800 flex gap-2 pl-2">
                                             <button
-                                                onClick={() => selectedPatient?.id === p.id ? setSelectedPatient(null) : openClinicalModal(p)}
-                                                className={`flex-1 btn flex items-center justify-center gap-2 text-sm py-2 border-none text-white shadow-sm transition-all ${selectedPatient?.id === p.id ? 'bg-gray-400 hover:bg-gray-500' : 'bg-purple-600 hover:bg-purple-700 btn-primary'}`}
+                                                onClick={() => openClinicalModal(p)}
+                                                className="flex-1 btn flex items-center justify-center gap-2 text-sm py-2 border-none text-white shadow-sm transition-all bg-purple-600 hover:bg-purple-700 btn-primary"
                                             >
                                                 <CheckCircle size={16} /> Acompanhar
                                             </button>
@@ -542,21 +542,6 @@ export default function PrenatalPage() {
                         </div>
                     )}
 
-                    {/* Modal de Acompanhamento Renderizado Aqui */}
-                    {selectedPatient && (
-                        <PrenatalClinicalPanel
-                            patient={selectedPatient}
-                            clinicalData={clinicalData}
-                            handleClinicalChange={handleClinicalChange}
-                            newNote={newNote}
-                            setNewNote={setNewNote}
-                            newCarePlan={newCarePlan}
-                            setNewCarePlan={setNewCarePlan}
-                            saveClinicalData={saveClinicalData}
-                            isSavingClinical={isSavingClinical}
-                            onClose={() => setSelectedPatient(null)}
-                        />
-                    )}
                 </div>
             )}
 
@@ -618,6 +603,22 @@ export default function PrenatalPage() {
                     ))}
                 </div>
             </div>
+
+            {/* Modal de Acompanhamento Clínico — Renderizado no ROOT para position:fixed funcionar */}
+            {selectedPatient && (
+                <PrenatalClinicalPanel
+                    patient={selectedPatient}
+                    clinicalData={clinicalData}
+                    handleClinicalChange={handleClinicalChange}
+                    newNote={newNote}
+                    setNewNote={setNewNote}
+                    newCarePlan={newCarePlan}
+                    setNewCarePlan={setNewCarePlan}
+                    saveClinicalData={saveClinicalData}
+                    isSavingClinical={isSavingClinical}
+                    onClose={() => setSelectedPatient(null)}
+                />
+            )}
         </div>
     );
 }
