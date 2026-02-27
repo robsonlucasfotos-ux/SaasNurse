@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { cofenMedications, authorizedExams } from '@/data/cofen-meds';
-import { Search, Phone, AlertTriangle, Calculator, CheckCircle, HeartPulse, MessageCircle, Plus, Users, Loader2 } from 'lucide-react';
+import { Search, Phone, AlertTriangle, Calculator, CheckCircle, HeartPulse, MessageCircle, Plus, Users, Loader2, Baby } from 'lucide-react';
 import PrenatalClinicalPanel from '@/components/PrenatalClinicalPanel';
 
 interface PregnantWoman {
@@ -119,8 +119,9 @@ export default function PrenatalPage() {
         setIsLoading(true);
         try {
             const { data, error } = await supabase
-                .from('pregnant_women')
+                .from('patients')
                 .select('*')
+                .eq('is_pregnant', true)
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
@@ -145,6 +146,34 @@ export default function PrenatalPage() {
         }
     };
 
+    const handleConcludePregnancy = async (patientId: string, outcome: string, currentClinicalData: any) => {
+        setIsLoading(true);
+        try {
+            const updatedData = {
+                ...(currentClinicalData || {}),
+                pregnancy_outcome: outcome,
+                pregnancy_end_date: new Date().toISOString()
+            };
+
+            const { error } = await supabase
+                .from('patients')
+                .update({
+                    is_pregnant: false,
+                    clinical_data: updatedData
+                })
+                .eq('id', patientId);
+
+            if (error) throw error;
+
+            alert(`Gestação encerrada com sucesso! Desfecho: ${outcome}`);
+            fetchPatients();
+        } catch (error) {
+            console.error("Erro ao finalizar gestação:", error);
+            alert("Não foi possível finalizar a gestação.");
+            setIsLoading(false);
+        }
+    };
+
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
@@ -152,10 +181,11 @@ export default function PrenatalPage() {
             const { data: userData } = await supabase.auth.getUser();
             if (!userData.user) throw new Error("Usuário não logado");
 
-            const { error } = await supabase.from('pregnant_women').insert([{
+            const { error } = await supabase.from('patients').insert([{
                 user_id: userData.user.id,
                 name: formData.name,
                 age: formData.age ? parseInt(formData.age) : null,
+                gender: 'Feminino',
                 birth_date: formData.birth_date || null,
                 phone: formData.phone || null,
                 clinical_data: {
@@ -165,6 +195,7 @@ export default function PrenatalPage() {
                 },
                 risk_level: formData.risk_level,
                 risk_reason: formData.risk_level === 'Alto' ? formData.risk_reason : null,
+                is_pregnant: true,
                 dum: formData.dum,
                 dpp: formData.dpp || null
             }]);
@@ -213,7 +244,7 @@ export default function PrenatalPage() {
             }
 
             const { error } = await supabase
-                .from('pregnant_women')
+                .from('patients')
                 .update({ clinical_data: updatedClinicalData })
                 .eq('id', selectedPatient.id);
 
@@ -491,6 +522,18 @@ export default function PrenatalPage() {
                                                 className={`flex-1 btn flex items-center justify-center gap-2 text-sm py-2 border-none text-white shadow-sm transition-all ${selectedPatient?.id === p.id ? 'bg-gray-400 hover:bg-gray-500' : 'bg-purple-600 hover:bg-purple-700 btn-primary'}`}
                                             >
                                                 {selectedPatient?.id === p.id ? 'Fechar' : <><CheckCircle size={16} /> Acompanhar</>}
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    if (window.confirm(`Deseja registrar o parto ou encerramento da gestação para ${p.name}? A paciente não aparecerá mais nesta lista, mas continuará salva na "Saúde da Mulher".`)) {
+                                                        const outcome = window.prompt("Digite o desfecho (ex: 'Parto Normal', 'Cesárea' ou 'Aborto'):", "Parto");
+                                                        if (outcome) handleConcludePregnancy(p.id, outcome, p.clinical_data);
+                                                    }
+                                                }}
+                                                className="p-2 border border-pink-200 dark:border-pink-900/50 text-pink-600 dark:text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-900/20 rounded-lg transition-colors flex items-center justify-center bg-white dark:bg-gray-800"
+                                                title="Finalizar Gestação (Parto/Aborto)"
+                                            >
+                                                <Baby size={18} />
                                             </button>
                                         </div>
                                         {selectedPatient?.id === p.id && (
