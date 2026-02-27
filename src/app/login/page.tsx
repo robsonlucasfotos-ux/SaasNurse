@@ -19,27 +19,18 @@ export default function LoginPage() {
         setError('');
 
         try {
-            // Bypass password using dev-login API route that generates a magic link
-            const res = await fetch('/api/dev-login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
+            const { error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
             });
 
-            const data = await res.json();
+            if (error) throw error;
 
-            if (!res.ok || !data.url) {
-                throw new Error(data.error || 'Falha ao gerar o link de acesso');
-            }
-
-            // O redirecionamento automático concluirá o login
-            window.location.href = data.url;
-
-            // NOTE: Device session upsert is skipped here since we redirect to the magic link URL
-            // and the session is actually created AFTER the redirect.
+            router.push('/');
+            router.refresh();
 
         } catch (err: any) {
-            setError(err.message || 'Erro ao acessar o sistema.');
+            setError(err.message || 'E-mail ou senha incorretos.');
         } finally {
             setIsLoading(false);
         }
@@ -56,11 +47,6 @@ export default function LoginPage() {
                 {error && (
                     <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg mb-4 w-full text-center font-medium">
                         {error}
-                    </div>
-                )}
-                {typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('reason') === 'session_expired' && (
-                    <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm p-3 rounded-lg mb-4 w-full text-center font-medium">
-                        Sua sessão expirou por atingir o limite de aparelhos logados simultaneamente.
                     </div>
                 )}
 
@@ -81,10 +67,10 @@ export default function LoginPage() {
                         <input
                             type="password"
                             className="form-control"
-                            placeholder="Apenas o e-mail é necessário"
+                            placeholder="Digite sua senha"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            disabled
+                            required
                         />
                     </div>
 
