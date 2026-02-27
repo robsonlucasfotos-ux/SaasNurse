@@ -81,6 +81,20 @@ export default function LoginPage() {
                     >
                         {isLoading ? <Loader2 className="animate-spin" size={20} /> : 'Acessar Sistema'}
                     </button>
+
+                    <button
+                        type="button"
+                        onClick={async () => {
+                            const { error } = await supabase.auth.signInWithPassword({
+                                email: 'nurse@aps.com',
+                                password: 'nursepassword'
+                            });
+                            if (!error) router.push('/');
+                        }}
+                        className="w-full mt-4 text-xs text-gray-400 hover:text-gray-600 underline"
+                    >
+                        Entrar como Desenvolvedor
+                    </button>
                 </form>
             </div>
         </div>
