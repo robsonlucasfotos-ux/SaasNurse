@@ -352,12 +352,16 @@ export default function HomePage() {
       {/* Clinical Cards Grid */}
       <p className="section-label" style={{ marginTop: '1.75rem' }}>Módulos Clínicos</p>
       <div className={styles.cardGrid}>
-        {clinicCards.map(card => {
+        {clinicCards.map((card, idx) => {
           const Icon = card.icon;
           return (
-            <Link key={card.href} href={card.href} className={styles.clinicCard} style={{ background: card.gradient }}>
-              <div className={styles.cardIconWrap} style={{ background: 'rgba(255,255,255,0.2)' }}>
-                <Icon size={22} color="white" strokeWidth={2} />
+            <Link key={card.href} href={card.href} className={styles.clinicCard} style={{
+              background: card.gradient,
+              boxShadow: `0 8px 28px ${card.glow}`,
+              animationDelay: `${idx * 0.06}s`,
+            }}>
+              <div className={styles.cardIconWrap} style={{ background: 'rgba(255,255,255,0.22)' }}>
+                <Icon size={24} color="white" strokeWidth={2} />
               </div>
               <span className={styles.cardLabel}>{card.label}</span>
               <span className={styles.cardSub}>{card.sub}</span>

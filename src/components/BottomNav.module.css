@@ -49,7 +49,7 @@
     justify-content: center;
     width: 36px;
     height: 28px;
-    border-radius: 10px;
+    border-radius: 50%;
     transition: background 0.2s var(--ease), transform 0.15s var(--ease);
 }
 
@@ -211,14 +211,18 @@
 }
 
 .drawerIcon {
-    width: 46px;
-    height: 46px;
-    border-radius: 14px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: transform 0.15s var(--ease);
+    transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+
+.drawerItem:hover .drawerIcon {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .drawerItem:active .drawerIcon {
