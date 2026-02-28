@@ -230,7 +230,7 @@ export default function PrenatalPage() {
     };
 
     const openClinicalModal = (patient: PregnantWoman) => {
-        console.log('Opening Clinical Modal for:', patient.name);
+        console.log('DEBUG: opening clinical modal for', patient.name);
         setEditingPatient(null);
         setClinicalData(patient.clinical_data || {});
         setNewNote('');
@@ -572,24 +572,6 @@ export default function PrenatalPage() {
                 </div>
             )}
 
-            {/* Clinical Follow-up Modal */}
-            {selectedPatient && (
-                <PrenatalClinicalPanel
-                    patient={selectedPatient}
-                    clinicalData={clinicalData}
-                    handleClinicalChange={(key: string, val: any) => setClinicalData((prev: any) => ({ ...prev, [key]: val }))}
-                    newNote={newNote}
-                    setNewNote={setNewNote}
-                    newCarePlan={newCarePlan}
-                    setNewCarePlan={setNewCarePlan}
-                    saveClinicalData={saveClinicalData}
-                    isSavingClinical={isSavingClinical}
-                    onClose={() => setSelectedPatient(null)}
-                    onConcludePregnancy={handleConcludePregnancy}
-                    trimestersData={trimestersData}
-                    cofenMedications={cofenMedications}
-                />
-            )}
 
             {/* Edit Patient Modal */}
             {editingPatient && (

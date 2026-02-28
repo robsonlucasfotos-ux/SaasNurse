@@ -23,10 +23,14 @@ export default function PrenatalClinicalPanel({
     trimestersData = [],
     cofenMedications = []
 }: any) {
+    console.log('DEBUG: PrenatalClinicalPanel mounted for', patient?.name);
     const [activeSection, setActiveSection] = useState<'evolution' | 'protocols'>('evolution');
     const [expandedProtocol, setExpandedProtocol] = useState<number | null>(null);
 
-    if (!patient) return null;
+    if (!patient) {
+        console.log('DEBUG: PrenatalClinicalPanel - no patient provided');
+        return null;
+    }
 
     const followUps: any[] = clinicalData?.followUps || [];
 
