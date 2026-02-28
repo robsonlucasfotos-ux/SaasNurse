@@ -457,6 +457,14 @@ export default function ChildCare() {
                     </div>
                 </ModalPortal>
             )}
+
+            {selectedPatient && (
+                <ChildClinicalPanel
+                    child={selectedPatient}
+                    onClose={() => setSelectedPatient(null)}
+                    onSave={fetchChildren}
+                />
+            )}
         </div>
     );
 }

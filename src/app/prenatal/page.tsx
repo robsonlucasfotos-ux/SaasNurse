@@ -652,6 +652,15 @@ export default function PrenatalPage() {
                     </div>
                 </ModalPortal>
             )}
+
+            {selectedPatient && (
+                <PrenatalClinicalPanel
+                    patient={selectedPatient}
+                    onClose={() => setSelectedPatient(null)}
+                    onSave={fetchPatients}
+                    onEndPregnancy={(outcome: string) => handleConcludePregnancy(selectedPatient.id, outcome, clinicalData)}
+                />
+            )}
         </div>
     );
 }
