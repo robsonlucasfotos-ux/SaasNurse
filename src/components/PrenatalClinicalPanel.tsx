@@ -56,15 +56,38 @@ export default function PrenatalClinicalPanel({
         <ModalPortal>
             {/* Dark overlay */}
             <div
-                className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
-                style={{ zIndex: 9998 }}
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0,0,0,0.7)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    zIndex: 9998,
+                    transition: 'opacity 0.3s ease',
+                }}
                 onClick={onClose}
             />
 
             {/* Slide-in Drawer */}
             <div
-                className="fixed top-0 right-0 h-full w-full md:w-[90%] lg:w-[85%] max-w-7xl bg-white flex flex-col shadow-2xl animate-in slide-in-from-right duration-500 ease-out"
-                style={{ zIndex: 9999 }}
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    right: 0,
+                    height: '100%',
+                    width: '100%',
+                    maxWidth: '80rem',
+                    background: '#ffffff',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    boxShadow: '-8px 0 40px rgba(0,0,0,0.15)',
+                    zIndex: 9999,
+                    overflow: 'hidden',
+                    animation: 'slideInRight 0.4s cubic-bezier(0.32, 0.72, 0, 1) forwards',
+                }}
             >
                 {/* ─── TOP HEADER: Patient Quick Stats ─── */}
                 <div className="px-6 md:px-10 py-6 border-b border-gray-100 bg-white flex-shrink-0">
