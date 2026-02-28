@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { cofenMedications, authorizedExams } from '@/data/cofen-meds';
+import { cofenMedications } from '@/data/cofen-meds';
 import { Search, AlertTriangle, Calculator, CheckCircle, HeartPulse, MessageCircle, Plus, Users, Loader2, Baby, Pencil, Save, X, Stethoscope } from 'lucide-react';
 import PrenatalClinicalPanel from '@/components/PrenatalClinicalPanel';
 import ModalPortal from '@/components/ModalPortal';
