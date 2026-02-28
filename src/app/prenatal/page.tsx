@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { cofenMedications, authorizedExams } from '@/data/cofen-meds';
-import { Search, AlertTriangle, Calculator, CheckCircle, HeartPulse, MessageCircle, Plus, Users, Loader2, Baby, Pencil, Save, X } from 'lucide-react';
+import { Search, AlertTriangle, Calculator, CheckCircle, HeartPulse, MessageCircle, Plus, Users, Loader2, Baby, Pencil, Save, X, Stethoscope } from 'lucide-react';
 import PrenatalClinicalPanel from '@/components/PrenatalClinicalPanel';
 import ModalPortal from '@/components/ModalPortal';
 
@@ -544,7 +544,7 @@ export default function PrenatalPage() {
                                                 onClick={() => openClinicalModal(p)}
                                                 className="flex-1 py-4 bg-gray-900 hover:bg-black text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-gray-200 active:scale-95 transition-all flex items-center justify-center gap-2"
                                             >
-                                                <Plus size={16} /> Acompanhar
+                                                <Stethoscope size={16} /> Abrir Prontuário
                                             </button>
                                             <button
                                                 onClick={() => openEditModal(p)}

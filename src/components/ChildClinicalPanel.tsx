@@ -6,7 +6,6 @@ import {
     Activity, Baby, BookOpen, Calendar, Save, MessageCircle,
     Stethoscope, ShieldCheck, ChevronDown, ChevronUp, Info, Syringe
 } from 'lucide-react';
-import ModalPortal from './ModalPortal';
 
 export default function ChildClinicalPanel({
     child,
@@ -47,7 +46,7 @@ export default function ChildClinicalPanel({
     }
 
     return (
-        <ModalPortal>
+        <>
             {/* Dark overlay */}
             <div
                 className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
@@ -69,10 +68,10 @@ export default function ChildClinicalPanel({
                                     {child.name}
                                 </h2>
                                 <span className={`px-3 py-1 text-xs font-black uppercase tracking-widest rounded-full border ${child.risk_level === 'Alto'
-                                        ? 'bg-red-50 text-red-600 border-red-200'
-                                        : child.risk_level === 'Moderado'
-                                            ? 'bg-orange-50 text-orange-600 border-orange-200'
-                                            : 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                                    ? 'bg-red-50 text-red-600 border-red-200'
+                                    : child.risk_level === 'Moderado'
+                                        ? 'bg-orange-50 text-orange-600 border-orange-200'
+                                        : 'bg-emerald-50 text-emerald-600 border-emerald-200'
                                     }`}>
                                     RISCO {child.risk_level || 'BAIXO'}
                                 </span>
@@ -126,8 +125,8 @@ export default function ChildClinicalPanel({
                     <button
                         onClick={() => setActiveSection('evolution')}
                         className={`px-6 py-4 text-sm font-black uppercase tracking-widest border-b-4 transition-all ${activeSection === 'evolution'
-                                ? 'border-indigo-600 text-indigo-600 bg-indigo-50/30'
-                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                            ? 'border-indigo-600 text-indigo-600 bg-indigo-50/30'
+                            : 'border-transparent text-gray-400 hover:text-gray-600'
                             }`}
                     >
                         <div className="flex items-center gap-2">
@@ -138,8 +137,8 @@ export default function ChildClinicalPanel({
                     <button
                         onClick={() => setActiveSection('milestones')}
                         className={`px-6 py-4 text-sm font-black uppercase tracking-widest border-b-4 transition-all ${activeSection === 'milestones'
-                                ? 'border-purple-600 text-purple-600 bg-purple-50/30'
-                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                            ? 'border-purple-600 text-purple-600 bg-purple-50/30'
+                            : 'border-transparent text-gray-400 hover:text-gray-600'
                             }`}
                     >
                         <div className="flex items-center gap-2">
@@ -338,8 +337,8 @@ export default function ChildClinicalPanel({
                                                 <div
                                                     key={m.id}
                                                     className={`p-1 rounded-[2.5rem] border-2 transition-all duration-300 ${expandedMilestone === m.id
-                                                            ? 'bg-gradient-to-tr from-indigo-50 to-purple-50 shadow-xl border-indigo-200'
-                                                            : 'bg-white border-transparent shadow-sm'
+                                                        ? 'bg-gradient-to-tr from-indigo-50 to-purple-50 shadow-xl border-indigo-200'
+                                                        : 'bg-white border-transparent shadow-sm'
                                                         }`}
                                                 >
                                                     <button
@@ -401,6 +400,6 @@ export default function ChildClinicalPanel({
                     </div>
                 </div>
             </div>
-        </ModalPortal>
+        </>
     );
 }

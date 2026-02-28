@@ -375,7 +375,7 @@ export default function ChildCare() {
                                                 className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-white active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2"
                                                 style={{ background: `linear-gradient(135deg, ${accentColor}, ${c.gender === 'Feminino' ? '#a855f7' : '#06b6d4'})`, boxShadow: `0 8px 20px ${accentColor}40` }}
                                             >
-                                                <Activity size={16} /> Acompanhar
+                                                <Activity size={16} /> Abrir Prontuário
                                             </button>
                                             <button
                                                 onClick={() => openEditModal(c)}
