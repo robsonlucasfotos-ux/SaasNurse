@@ -242,13 +242,68 @@ export default function PrenatalClinicalPanel({
 
                         {activeSection === 'evolution' ? (
                             <div className="flex-1 flex flex-col overflow-hidden">
-                                {/* Scrollable History */}
+
+                                {/* New Compose Panel - Moved to Top */}
+                                <div className="p-6 md:p-8 bg-white border-b border-gray-100 shadow-sm z-10 flex-shrink-0">
+                                    <h3 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-2">
+                                        <Pencil className="text-pink-600" size={24} />
+                                        Nova Evolução
+                                    </h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex items-center justify-between px-1">
+                                                <label className="text-xs font-black text-gray-700 uppercase tracking-widest">Avaliação</label>
+                                                <span className="text-[10px] font-bold text-gray-400 italic">Sintomas e Exame Físico</span>
+                                            </div>
+                                            <textarea
+                                                className="w-full p-5 bg-gray-50 border-2 border-gray-100 rounded-3xl focus:border-pink-500 focus:bg-white focus:ring-4 focus:ring-pink-500/10 transition-all min-h-[160px] resize-none text-gray-800 font-medium placeholder:text-gray-300 text-base"
+                                                placeholder="Como a paciente está? Sinais vitais, queixas clínicas..."
+                                                value={newNote}
+                                                onChange={e => setNewNote(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex items-center justify-between px-1">
+                                                <label className="text-xs font-black text-blue-700 uppercase tracking-widest">Autocuidado / Conduta</label>
+                                                <span className="text-[10px] font-bold text-blue-400 italic">Orientações e Prescrições</span>
+                                            </div>
+                                            <textarea
+                                                className="w-full p-5 bg-blue-50/30 border-2 border-blue-100 rounded-3xl focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-600/10 transition-all min-h-[160px] resize-none text-blue-900 font-bold placeholder:text-blue-300 text-base"
+                                                placeholder="Plano de cuidados, medicações orientadas, pedidos de exames..."
+                                                value={newCarePlan}
+                                                onChange={e => setNewCarePlan(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                                        <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase bg-gray-50 px-3 py-1.5 rounded-full">
+                                            <Info size={12} />
+                                            Registro profissional permanente (COFEN)
+                                        </div>
+                                        <button
+                                            onClick={saveClinicalData}
+                                            disabled={isSavingClinical || (!newNote.trim() && !newCarePlan.trim())}
+                                            className="w-full md:w-auto px-10 py-4 bg-gray-900 hover:bg-black active:scale-95 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-gray-200 flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:scale-100"
+                                        >
+                                            {isSavingClinical ? (
+                                                <Loader2 size={24} className="animate-spin" />
+                                            ) : (
+                                                <>
+                                                    <Save size={20} />
+                                                    Salvar e Finalizar
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Scrollable History - Moved to Bottom */}
                                 <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8 space-y-8 bg-gray-50/30">
                                     <div className="flex items-center justify-between">
-                                        <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
-                                            <BookOpen className="text-blue-600" size={24} />
-                                            Prontuário de Enfermagem
-                                            <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] rounded-full">
+                                        <h3 className="text-sm font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                                            <BookOpen className="text-gray-400" size={18} />
+                                            Histórico do Prontuário
+                                            <span className="ml-2 px-2 py-0.5 bg-gray-200 text-gray-600 text-[9px] rounded-full">
                                                 {followUps.length} evoluções
                                             </span>
                                         </h3>
@@ -267,17 +322,19 @@ export default function PrenatalClinicalPanel({
                                     )}
 
                                     {followUps.length === 0 ? (
-                                        <div className="p-12 border-2 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center text-center bg-white/50">
-                                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-300 mb-4">
-                                                <FileText size={32} />
+                                        <div className="p-8 border-2 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center text-center bg-white/50">
+                                            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-300 mb-3">
+                                                <FileText size={24} />
                                             </div>
-                                            <p className="text-lg font-black text-gray-800">Sem histórico registrado</p>
-                                            <p className="text-sm text-gray-400 mt-1">Inicie a primeira evolução desta gestante abaixo.</p>
+                                            <p className="text-base font-black text-gray-800">Sem histórico</p>
                                         </div>
                                     ) : (
                                         <div className="space-y-6">
                                             {followUps.map((note, idx) => (
-                                                <div key={idx} className="group bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
+                                                <div key={idx} className="group bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden">
+                                                    {idx === 0 && (
+                                                        <div className="absolute top-0 right-0 w-2 h-full bg-blue-500"></div>
+                                                    )}
                                                     <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-50">
                                                         <div className="flex items-center gap-3">
                                                             <div className="px-3 py-1.5 bg-gray-100 rounded-xl text-[10px] font-black text-gray-500 flex items-center gap-1.5">
@@ -287,20 +344,20 @@ export default function PrenatalClinicalPanel({
                                                                 {new Date(note.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                                             </div>
                                                             {idx === 0 && (
-                                                                <span className="px-2 py-1 bg-blue-600 text-white text-[9px] font-black uppercase tracking-tighter rounded-lg">Recente</span>
+                                                                <span className="px-2 py-1 bg-blue-100 text-blue-700 text-[9px] font-black uppercase tracking-tighter rounded-lg">Última Entrada</span>
                                                             )}
                                                         </div>
                                                     </div>
                                                     <div className="space-y-4">
                                                         {note.text && (
                                                             <div>
-                                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Observações S/O</p>
+                                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Avaliação</p>
                                                                 <p className="text-gray-800 leading-relaxed font-medium">{note.text}</p>
                                                             </div>
                                                         )}
                                                         {note.carePlan && (
-                                                            <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
-                                                                <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1.5">Conduta A/P</p>
+                                                            <div className="bg-blue-50/30 p-4 rounded-2xl border border-blue-100/50">
+                                                                <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1.5">Autocuidado e Conduta</p>
                                                                 <p className="text-blue-900 font-bold">{note.carePlan}</p>
                                                             </div>
                                                         )}
@@ -309,56 +366,6 @@ export default function PrenatalClinicalPanel({
                                             ))}
                                         </div>
                                     )}
-                                </div>
-
-                                {/* Compose Panel */}
-                                <div className="p-6 md:p-8 bg-white border-t border-gray-100 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] z-10">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="flex flex-col gap-2">
-                                            <div className="flex items-center justify-between px-1">
-                                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Subjetivo & Objetivo</label>
-                                                <span className="text-[9px] font-bold text-gray-300 italic">O que ela sente / o que você viu</span>
-                                            </div>
-                                            <textarea
-                                                className="w-full p-5 bg-gray-50 border-2 border-gray-100 rounded-3xl focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 transition-all min-h-[140px] resize-none text-gray-800 font-medium placeholder:text-gray-300"
-                                                placeholder="Sintomas relatados, sinais vitais (PA, Temp, BCF)..."
-                                                value={newNote}
-                                                onChange={e => setNewNote(e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                            <div className="flex items-center justify-between px-1">
-                                                <label className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Avaliação & Plano</label>
-                                                <span className="text-[9px] font-bold text-blue-300 italic">O que você fará / prescreveu</span>
-                                            </div>
-                                            <textarea
-                                                className="w-full p-5 bg-blue-50/30 border-2 border-blue-100 rounded-3xl focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-600/10 transition-all min-h-[140px] resize-none text-blue-900 font-bold placeholder:text-blue-200"
-                                                placeholder="Metas de cuidado, exames pedidos, vacinas..."
-                                                value={newCarePlan}
-                                                onChange={e => setNewCarePlan(e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-                                        <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase bg-gray-50 px-3 py-1.5 rounded-full">
-                                            <Info size={12} />
-                                            Registro profissional permanente (COFEN)
-                                        </div>
-                                        <button
-                                            onClick={saveClinicalData}
-                                            disabled={isSavingClinical}
-                                            className="w-full md:w-auto px-10 py-5 bg-black hover:bg-gray-800 active:scale-95 text-white rounded-2xl font-black text-lg shadow-xl shadow-gray-200 flex items-center justify-center gap-3 transition-all disabled:opacity-50"
-                                        >
-                                            {isSavingClinical ? (
-                                                <Loader2 size={24} className="animate-spin" />
-                                            ) : (
-                                                <>
-                                                    <Save size={24} />
-                                                    Salvar Evolução
-                                                </>
-                                            )}
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                         ) : (

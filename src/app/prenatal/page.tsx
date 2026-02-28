@@ -497,7 +497,11 @@ export default function PrenatalPage() {
                                 const riskColor = p.risk_level === 'Alto' ? 'red' : p.risk_level === 'Moderado' ? 'orange' : 'emerald';
 
                                 return (
-                                    <div key={p.id} className="group border-2 border-gray-50 rounded-[2.5rem] p-6 flex flex-col bg-white hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 relative">
+                                    <div
+                                        key={p.id}
+                                        onClick={() => openClinicalModal(p)}
+                                        className="group border-2 border-gray-50 rounded-[2.5rem] p-6 flex flex-col bg-white hover:border-pink-300 hover:shadow-2xl hover:shadow-pink-500/10 transition-all duration-300 relative cursor-pointer transform hover:-translate-y-1"
+                                    >
                                         <div className={`absolute top-6 left-0 w-1.5 h-12 rounded-r-full bg-${riskColor}-500 shadow-[2px_0_10px_rgba(0,0,0,0.1)]`}></div>
 
                                         <div className="flex justify-between items-start mb-4">
@@ -530,7 +534,8 @@ export default function PrenatalPage() {
                                                 href={`https://wa.me/55${p.phone.replace(/\D/g, '')}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center gap-2 text-emerald-600 font-bold text-xs mb-4 hover:bg-emerald-50 p-2 rounded-xl transition-colors w-fit"
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="flex items-center gap-2 text-emerald-600 font-bold text-xs mb-4 hover:bg-emerald-50 p-2 rounded-xl transition-colors w-fit relative z-10"
                                             >
                                                 <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">
                                                     <MessageCircle size={14} />
@@ -539,16 +544,14 @@ export default function PrenatalPage() {
                                             </a>
                                         )}
 
-                                        <div className="mt-auto flex gap-2">
+                                        <div className="mt-auto flex justify-end">
                                             <button
-                                                onClick={() => openClinicalModal(p)}
-                                                className="flex-1 py-4 bg-gray-900 hover:bg-black text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-gray-200 active:scale-95 transition-all flex items-center justify-center gap-2"
-                                            >
-                                                <Stethoscope size={16} /> Abrir Prontuário
-                                            </button>
-                                            <button
-                                                onClick={() => openEditModal(p)}
-                                                className="p-4 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-2xl transition-all active:scale-90"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    openEditModal(p);
+                                                }}
+                                                className="p-4 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-2xl transition-all active:scale-90 relative z-10"
+                                                title="Editar Paciente"
                                             >
                                                 <Pencil size={18} />
                                             </button>
