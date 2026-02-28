@@ -6,6 +6,7 @@ import {
     Activity, Baby, BookOpen, Calendar, Save, MessageCircle,
     Stethoscope, ShieldCheck, ChevronDown, ChevronUp, Info, Pencil
 } from 'lucide-react';
+import ModalPortal from './ModalPortal';
 
 export default function PrenatalClinicalPanel({
     patient,
@@ -48,7 +49,7 @@ export default function PrenatalClinicalPanel({
     const progressPercent = (weeks !== null && !isNaN(weeks)) ? Math.min(Math.round((weeks / 40) * 100), 100) : 0;
 
     return (
-        <>
+        <ModalPortal>
             {/* Dark overlay */}
             <div
                 className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
@@ -467,6 +468,6 @@ export default function PrenatalClinicalPanel({
                     </div>
                 </div>
             </div>
-        </>
+        </ModalPortal>
     );
 }

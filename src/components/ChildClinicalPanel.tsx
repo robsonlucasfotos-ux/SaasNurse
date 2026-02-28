@@ -6,6 +6,7 @@ import {
     Activity, Baby, BookOpen, Calendar, Save, MessageCircle,
     Stethoscope, ShieldCheck, ChevronDown, ChevronUp, Info, Syringe
 } from 'lucide-react';
+import ModalPortal from './ModalPortal';
 
 export default function ChildClinicalPanel({
     child,
@@ -46,7 +47,7 @@ export default function ChildClinicalPanel({
     }
 
     return (
-        <>
+        <ModalPortal>
             {/* Dark overlay */}
             <div
                 className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
@@ -400,6 +401,6 @@ export default function ChildClinicalPanel({
                     </div>
                 </div>
             </div>
-        </>
+        </ModalPortal>
     );
 }
