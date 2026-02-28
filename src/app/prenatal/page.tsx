@@ -499,8 +499,7 @@ export default function PrenatalPage() {
                                 return (
                                     <div
                                         key={p.id}
-                                        onClick={() => openClinicalModal(p)}
-                                        className="group border-2 border-gray-50 rounded-[2.5rem] p-6 flex flex-col bg-white hover:border-pink-300 hover:shadow-2xl hover:shadow-pink-500/10 transition-all duration-300 relative cursor-pointer transform hover:-translate-y-1"
+                                        className="group border-2 border-gray-50 rounded-[2.5rem] p-6 flex flex-col bg-white hover:border-pink-300 hover:shadow-2xl hover:shadow-pink-500/10 transition-all duration-300 relative"
                                     >
                                         <div className={`absolute top-6 left-0 w-1.5 h-12 rounded-r-full bg-${riskColor}-500 shadow-[2px_0_10px_rgba(0,0,0,0.1)]`}></div>
 
@@ -544,7 +543,16 @@ export default function PrenatalPage() {
                                             </a>
                                         )}
 
-                                        <div className="mt-auto flex justify-end">
+                                        <div className="mt-auto flex gap-2">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    openClinicalModal(p);
+                                                }}
+                                                className="flex-1 py-4 bg-gray-900 hover:bg-black text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-gray-200 active:scale-95 transition-all flex items-center justify-center gap-2 relative z-10"
+                                            >
+                                                <Stethoscope size={16} /> Avaliar Paciente
+                                            </button>
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
