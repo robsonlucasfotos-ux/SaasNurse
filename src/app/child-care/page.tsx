@@ -149,26 +149,45 @@ export default function ChildCare() {
             if (error) throw error;
             setChildren(prev => prev.map(c => c.id === editingChild.id ? { ...c, ...editForm } as Child : c));
             setEditingChild(null);
-        } catch (err: any) { alert('Erro: ' + err.message); }
+        } catch (err: any) { alert('Erro ao salvar: ' + err.message); }
         finally { setIsSavingEdit(false); }
+    };
+
+    const handleClinicalChange = (key: string, value: any) => {
+        setClinicalData((prev: any) => ({ ...prev, [key]: value }));
     };
 
     const saveClinicalData = async () => {
         if (!selectedPatient) return;
         setIsSavingClinical(true);
         try {
-            const updated = { ...clinicalData };
-            if (newNote.trim() || newCarePlan.trim()) {
-                updated.followUps = [{ date: new Date().toISOString(), text: newNote, carePlan: newCarePlan }, ...(updated.followUps || [])];
-            }
-            const { error } = await supabase.from('children').update({ clinical_data: updated }).eq('id', selectedPatient.id);
+            const dateStr = new Date().toISOString();
+            const newFollowUp = {
+                date: dateStr,
+                text: newNote,
+                carePlan: newCarePlan
+            };
+
+            const updatedFollowUps = [newFollowUp, ...(clinicalData.followUps || [])];
+            const finalData = { ...clinicalData, followUps: updatedFollowUps };
+
+            const { error } = await supabase
+                .from('children')
+                .update({ clinical_data: finalData })
+                .eq('id', selectedPatient.id);
+
             if (error) throw error;
-            setChildren(prev => prev.map(c => c.id === selectedPatient.id ? { ...c, clinical_data: updated } : c));
-            setClinicalData(updated);
+
+            setClinicalData(finalData);
+            setChildren(prev => prev.map(c => c.id === selectedPatient.id ? { ...c, clinical_data: finalData } : c));
             setNewNote('');
             setNewCarePlan('');
-        } catch (err) { alert('Erro ao salvar.'); }
-        finally { setIsSavingClinical(false); }
+        } catch (err: any) {
+            console.error('Erro ao salvar evolução:', err);
+            alert('Erro ao salvar evolução: ' + err.message);
+        } finally {
+            setIsSavingClinical(false);
+        }
     };
 
     const getAge = (birthStr: string) => {
@@ -461,8 +480,16 @@ export default function ChildCare() {
             {selectedPatient && (
                 <ChildClinicalPanel
                     child={selectedPatient}
+                    clinicalData={clinicalData}
+                    handleClinicalChange={handleClinicalChange}
+                    newNote={newNote}
+                    setNewNote={setNewNote}
+                    newCarePlan={newCarePlan}
+                    setNewCarePlan={setNewCarePlan}
+                    saveClinicalData={saveClinicalData}
+                    isSavingClinical={isSavingClinical}
                     onClose={() => setSelectedPatient(null)}
-                    onSave={fetchChildren}
+                    milestones={childMilestones}
                 />
             )}
         </div>
